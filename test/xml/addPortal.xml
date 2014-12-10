@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<portal>
+    <name>myBraveNewPortal</name>
+    <contextItemName>[BBHOST]</contextItemName>
+    <properties>
+	<property name="DefaultLandingPage">
+	    <value type="string">index</value>
+	</property>
+	<property name="DefaultDevice">
+	    <value type="string">web</value>
+	</property>
+	<property name="TargetedDevice">
+	    <value type="string">web</value>
+	</property>
+	<property name="title">
+	    <value type="string">My Brave New Portal!</value>
+	</property>
+    </properties>
+</portal>
