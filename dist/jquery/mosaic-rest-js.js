@@ -161,9 +161,37 @@
 		       // code
 		}
 	    }
+            if (this.command === 'cache' && this.uri[1] === 'all') {
+                return this.deleteAllCache(0);
+            }
 	    return this.parseInput(v, p);
-	}
+	},
+        deleteAllCache: function(i) {
+            var t = this;
+            this.uri[1] = cch[i];
+            return this.req().then(function(v) {
+                if (!v.error && i < cch.length - 1) return t.deleteAllCache(++i);
+                return v;
+            });
+        }
     });
+
+var cch = ['globalModelCache',
+        'retrievedWidgetCache',
+        'widgetChromeStaticCache',
+        'serverSideClosureCache',
+        'urlLevelCache',
+        //'webCache',
+        'gModelCache',
+        'uuidFromExtendedItemNamesCache',
+        'springAclSidCacheRegion',
+        'contextNameToItemNameToUuidCache',
+        'widgetCache',
+        'uuidToContentReferencesCache',
+        'springAclCacheRegion',
+        'itemUuidToReferencingLinkUuidsCache',
+        'uuidToCacheKeysCache',
+        'versionBundleCache'];
 
 var $;
 

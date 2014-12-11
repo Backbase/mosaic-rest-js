@@ -1,6 +1,21 @@
 
 var r = new BBRest({portal: 'myBraveNewPortal', toJs: true});
 
+describe('Testing all cache delete', function () {
+
+    before(function () {
+    });
+
+    it('should delete all caches', function (done) {
+	r.cache('all').delete().then(function(v) {
+	    assert.propertyVal(v, 'statusCode', 204);
+	    //assert.deepPropertyVal(v, 'body.portals.portal.length', 3);
+	    done();
+	});
+    });
+
+});
+
 describe('Testing server and portal methods', function () {
 
     before(function () {

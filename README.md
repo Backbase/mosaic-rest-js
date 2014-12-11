@@ -14,7 +14,7 @@ var BBRest = require('mosaic-rest-js'),
 // list portals
 bbrest.server().get().then(function(value) {
  if (value.statusCode === 200) {
-   console.log('There are ' + value.body.portals.portal.length + ' defined on the server');
+   console.log('Response OK');
  }
 });
 
@@ -29,7 +29,7 @@ bbrest.server().put('updatePortal.xml').then(function(d) {
 }); 
 
 // list 5 items from catalog
-bbrest.server(true).query({ps:5}).get().then(function(d) {
+bbrest.catalog().query({ps:5}).get().then(function(d) {
  console.log(d);
 });
 ```
@@ -57,8 +57,8 @@ Prepares request on server domain. [API Reference] (https://my.backbase.com/reso
 Valid Requests, returning promises:
 ```
 bbrest.server().get(); // returns list of portals
-bbrest.server().post(xmlPath:String); // creates a portal
-bbrest.server().put(xmlPath:String); // updates portal(s)
+bbrest.server().post('path.to.xml'); // creates a portal
+bbrest.server().put('path.to.xml'); // updates portal(s)
 ```
 
 #### portal()
@@ -250,6 +250,8 @@ Prepares cache request. [API Reference] (https://my.backbase.com/resources/docum
 
 Valid Requests, returning promises:
 ```
+bbrest.cache('all').delete(); // sends all of the below requests one by one
+
 bbrest.cache('globalModelCache').delete();
 bbrest.cache('retrievedWidgetCache').delete();
 bbrest.cache('widgetChromeStaticCache').delete();
