@@ -253,13 +253,22 @@ Prepares cache request. [API Reference] (https://my.backbase.com/resources/docum
 
 Valid Requests, returning promises:
 ```
-bbrest.cache('global').delete(); // clears the cache of the model
-bbrest.cache('widget').delete(); // clears the cache of widget definitions
-bbrest.cache('chrome').delete(); // clears the cache of the widget chrome
-bbrest.cache('closure').delete(); // clears the serverSideClosureCache
-bbrest.cache('url').delete(); // clears the urlLevelCache
-bbrest.cache('web').delete(); // clears the cache of the requested URLs
-bbrest.cache('gmodel').delete(); // clears the gModelCache
+bbrest.cache('globalModelCache').delete();
+bbrest.cache('retrievedWidgetCache').delete();
+bbrest.cache('widgetChromeStaticCache').delete();
+bbrest.cache('serverSideClosureCache').delete();
+bbrest.cache('urlLevelCache').delete();
+bbrest.cache('webCache').delete();
+bbrest.cache('gModelCache').delete();
+bbrest.cache('uuidFromExtendedItemNamesCache').delete();
+bbrest.cache('springAclSidCacheRegion').delete();
+bbrest.cache('contextNameToItemNameToUuidCache').delete();
+bbrest.cache('widgetCache').delete();
+bbrest.cache('uuidToContentReferencesCache').delete();
+bbrest.cache('springAclCacheRegion').delete();
+bbrest.cache('itemUuidToReferencingLinkUuidsCache').delete();
+bbrest.cache('uuidToCacheKeysCache').delete();
+bbrest.cache('versionBundleCache').delete();
 ```
 
 ## BBReq methods

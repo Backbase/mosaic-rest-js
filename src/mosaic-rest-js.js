@@ -73,32 +73,7 @@
 	    return new BBReq('audit', this.config, [meta? 'auditmeta' : 'auditevents']);
 	},
 	cache: function(type) {
-	    var a = ['caches'];
-	    switch(type) {
-		case 'global':
-		    a.push('globalModelCache');
-		    break;
-		case 'widget':
-		    a.push('retrievedWidgetCache');
-		    break;
-		case 'chrome':
-		    a.push('widgetChromeStaticCache');
-		    break;
-		case 'closure':
-		    a.push('serverSideClosureCache');
-		    break;
-		case 'url':
-		    a.push('urlLevelCache');
-		    break;
-		case 'web':
-		    a.push('webCache');
-		    break;
-		case 'gmodel':
-		    a.push('gModelCache');
-		    break;
-		default:
-		    break;
-	    }
+	    var a = ['caches', type];
 	    return new BBReq('cache', this.config, a);
 	},
 	import: function() {
