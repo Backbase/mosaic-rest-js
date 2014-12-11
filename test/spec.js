@@ -54,13 +54,13 @@ describe('Testing server and portal methods', function () {
 describe('Testing catalog methods', function () {
 
     it('should return server catalog with proper page size', function (done) {
-	r.server(true).query({ps: 27}).get().then(function(d) {
+	r.catalog().query({ps: 27}).get().then(function(d) {
 	    assert.propertyVal(d, 'statusCode', 200);
 	    done();
 	});
     });
     it('should return portal catalog', function (done) {
-	r.portal(true).get().then(function(d) {
+	r.catalog().get().then(function(d) {
 	    assert.propertyVal(d, 'statusCode', 200);
 	    done();
 	});

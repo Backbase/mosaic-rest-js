@@ -21,16 +21,27 @@
     }
 
     extend(BBRest.prototype, {
-	server: function(isCatalog, itemName) {
-	    var a = [isCatalog? 'catalog' : 'portals'];
-	    if (itemName) a.push(itemName);
-	    return new BBReq('server', this.config, a);
+	server: function() {
+	    return new BBReq('server', this.config, ['portals']);
 	},
-	portal: function(isCatalog) {
+	portal: function() {
 	    var a = ['portals', this.config.portal];
-	    if (isCatalog) a.push('catalog');
 	    return new BBReq('portal', this.config, a);
 	},
+        // if item is boolean target is portal catalog, if string, target is item in server catalog
+        catalog: function(item) {
+            var a = [],
+                target = 'server';
+
+            if (typeof item === 'boolean') {
+                a = ['portals', this.config.portal];
+                target = 'portal';
+            } else {
+                a = ['server'];
+                if (item) a.push(item);
+            }
+	    return new BBReq(target, this.config, a);
+        },
 	container: function(containerName) {
 	    var a = ['portals', this.config.portal, 'containers'];
 	    if (containerName) a.push(containerName);
