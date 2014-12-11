@@ -29,12 +29,20 @@ describe('Testing server and portal methods', function () {
 	});
     });
 
-    it('should update testing portal and get portals xml', function (done) {
+    it('should update testing portal', function (done) {
 	r.server().put(xmlPath + 'updatePortal.xml').then(function(d) {
 	    assert.propertyVal(d, 'statusCode', 204);
 	    done();
 	});
     });
+
+    it('should return portal xml', function (done) {
+	r.portal().get().then(function(d) {
+	    assert.propertyVal(d, 'statusCode', 200);
+	    done();
+	});
+    });
+
 
     it('should return portal rights', function (done) {
 	r.portal().rights().get().then(function(d) {

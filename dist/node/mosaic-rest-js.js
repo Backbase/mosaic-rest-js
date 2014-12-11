@@ -105,10 +105,6 @@
     }
 
     extend(BBReq.prototype, {
-	xml: function() {
-	    this.uri[this.uri.length - 1] += '.xml';
-	    return this;
-	},
 	rights: function() {
 	    this.uri.push('rights');
 	    return this;
@@ -123,6 +119,13 @@
 	    return this;
 	},
 	get: function() {
+            /* methods that use .xml:
+             * portal().xml().get() - only this one is exception, the rest of them work without xml extension
+             * container('name').xml().get()
+             * widget('name').xml().get()
+             * page('name').xml().get()
+             * link('name').xml().get() */
+	    if (this.uri[0] === 'portals' && this.uri.length === 2) this.uri[1] += '.xml';
 	    this.method = 'GET';
 	    return this.req();
 	},

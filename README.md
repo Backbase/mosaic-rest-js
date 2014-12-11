@@ -70,7 +70,7 @@ Valid Requests, returning promises:
 bbrest.portal().put('path.to.xml'); // updates portal
 bbrest.portal().delete(); // deletes the portal
 
-bbrest.portal().xml().get(); // returns portal data
+bbrest.portal().get(); // returns portal data
 
 bbrest.portal().rights().get(); // returns portal rights
 bbrest.portal().rights().put('path.to.xml'); // updates portal rights
@@ -113,8 +113,6 @@ bbrest.container('name').get(); // returns container
 bbrest.container('name').put('path.to.xml'); // updates container
 bbrest.container('name').delete(); // deletes container
 
-bbrest.container('name').xml().get(); // returns container
-
 bbrest.container('name').rights().get(); // returns container rights
 bbrest.container('name').rights().put('path.to.xml'); // updates container rights
 ```
@@ -134,14 +132,12 @@ bbrest.widget('name').get(); // returns widget
 bbrest.widget('name').put('path.to.xml'); // updates widget
 bbrest.widget('name').delete(); // deletes widget
 
-bbrest.widget('name').xml().get(); // returns widget
-
 bbrest.widget('name').rights().get(); // returns widget rights
 bbrest.widget('name').rights().put('path.to.xml'); // updates widget rights
 ```
 
 #### page(name:String)
-Prepares widget request. [API Reference] (https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_page.html)
+Prepares page request. [API Reference] (https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_page.html)
 - **name** - name of the page to target
 - *returns* instance of the [BBReq] (#BBReq)
 
@@ -154,8 +150,6 @@ bbrest.page().put('path.to.xml'); // updates page(s)
 bbrest.page('name').get(); // returns page
 bbrest.page('name').put('path.to.xml'); // updates page
 bbrest.page('name').delete(); // deletes page
-
-bbrest.page('name').xml().get(); // returns page
 
 bbrest.page('name').rights().get(); // returns page rights
 bbrest.page('name').rights().put('path.to.xml'); // updates page rights
@@ -175,8 +169,6 @@ bbrest.link().put('path.to.xml'); // updates link(s)
 bbrest.link('name').get(); // returns link
 bbrest.link('name').put('path.to.xml'); // updates link
 bbrest.link('name').delete(); // deletes link
-
-bbrest.link('name').xml().get(); // returns link
 
 bbrest.link('name').rights().get(); // returns link rights
 bbrest.link('name').rights().put('path.to.xml'); // updates link rights
@@ -277,10 +269,6 @@ bbrest.cache('versionBundleCache').delete();
 ```
 
 ## BBReq methods
-#### xml()
-Modifies request to return xml definition.
-- *returns* instance of the [BBReq] (#BBReq)
-
 #### rights()
 Modifies request to target rights.
 - *returns* instance of the [BBReq] (#BBReq)
