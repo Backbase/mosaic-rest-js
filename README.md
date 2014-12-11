@@ -269,7 +269,7 @@ bbrest.cache('itemUuidToReferencingLinkUuidsCache').delete();
 bbrest.cache('uuidToCacheKeysCache').delete();
 bbrest.cache('versionBundleCache').delete();
 ```
-
+You can [get bookmarklet] (http://goo.gl/YqOrp8) to delete all caches at once.
 ## BBReq methods
 #### rights()
 Modifies request to target rights.
