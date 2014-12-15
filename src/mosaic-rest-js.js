@@ -15,7 +15,7 @@
 	    port: '7777',
 	    context: 'portalserver',
 	    username: 'admin',
-	    password: 'admin',
+	    password: 'admin', // TODO: do not expose password for frontend version
 	    portal: null
 	}, cnf || {});
     }
@@ -96,7 +96,7 @@
 
     function BBReq(cmnd, cnf, uri) {
 	this.command = cmnd;
-	this.config = cnf;
+	this.config = extend({}, cnf);
 	this.uri = uri;
 	this.qs = {};
 	this.headers = {
