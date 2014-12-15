@@ -16,6 +16,7 @@
 	    context: 'portalserver',
 	    username: 'admin',
 	    password: 'admin', // TODO: do not expose password for frontend version
+            plugin: null,
 	    portal: null
 	}, cnf || {});
     }

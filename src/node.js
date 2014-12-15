@@ -69,8 +69,8 @@ BBReq.prototype.parseInput = function(inp, params) {
                 };
             });
             break;
-        case 'function':
-            return this.req(inp(this, params));
+        case 'object':
+            return this.req(this.config.plugin.apply(this, arguments));
             break;
         default:
 	    return this.req(inp);
