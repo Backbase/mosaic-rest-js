@@ -35,10 +35,10 @@
                 target = 'server';
 
             if (typeof item === 'boolean') {
-                a = ['portals', this.config.portal];
+                a = ['portals', this.config.portal, 'catalog'];
                 target = 'portal';
             } else {
-                a = ['server'];
+                a = ['catalog'];
                 if (item) a.push(item);
             }
 	    return new BBReq(target, this.config, a);

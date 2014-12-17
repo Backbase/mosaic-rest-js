@@ -94,6 +94,7 @@ bbrest.catalog().delete('path.to.xml'); // batch delete items from the server ca
 bbrest.catalog('myItem').get(); // returns item from the server catalog
 bbrest.catalog('myItem').delete(); // deletes item from the server catalog
 
+bbrest.catalog(true).get(); // returns portal catalog
 bbrest.catalog(true).post('path.to.xml'); // add item(s) to portal catalog
 bbrest.catalog(true).delete('path.to.xml'); // deletes item(s) from portal catalog
 ```
