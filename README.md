@@ -309,12 +309,13 @@ Performs DELETE request
 {
   error: // true if is error
   statusCode: // http status code
-  info: // http status code description or error infor
+  statusInfo: // http status code description or error infor
   body: // contains body of the server response,
   href: // request location,
   method: // request method,
   reqBody: // request body,
-  file: // file name
+  file: // file name,
+  headers: // response headers
 }
 ```
 

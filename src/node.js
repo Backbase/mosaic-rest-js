@@ -26,7 +26,7 @@ BBReq.prototype.req = function(data) {
     .then(function(p) {
 	var o = {
 	    statusCode: parseInt(p[0].statusCode),
-	    info: p[0].request.httpModule.STATUS_CODES[p[0].statusCode],
+	    statusInfo: p[0].request.httpModule.STATUS_CODES[p[0].statusCode],
 	    body: p[0].body,
 	    href: p[0].request.href,
 	    method: p[0].request.method,
@@ -35,15 +35,21 @@ BBReq.prototype.req = function(data) {
 	    file: t.file || null
 	};
 	if (o.statusCode >= 400) o.error = true;
-	else {
+	else if (o.statusCode === 302) {
+            // if server redirects to error page, set message as error
+            var es = o.headers.location.indexOf('errorMessage=');
+            if (es !== -1) o.error = unescape(o.headers.location.substr(es + 13));
 	}
+        // on get method if server redirects to error page, set message as error
+        var es = o.href.indexOf('errorMessage=');
+        if (es !== -1) o.error = unescape(o.href.substr(es + 13));
 	return o;
     })
     .fail(function(p) {
 	return {
 	    error: true,
 	    statusCode: null,
-	    info: 'Request failed',
+	    statusInfo: 'Request failed',
 	    body: null,
 	    href: uri,
 	    method: t.method,

@@ -32,22 +32,28 @@ BBReq.prototype.req = function(data) {
     .then(function(p, s, j) {
         var o = {
 	    statusCode: parseInt(j.status),
-	    info: j.statusCode,
+	    statusInfo: j.statusCode,
 	    body: j.responseText,
 	    href: uri,
 	    method: t.method,
 	    reqBody: data
         };
 	if (o.statusCode >= 400) o.error = true;
-	else {
-        }
+	else if (o.statusCode === 302) {
+            // if server redirects to error page, set message as error
+            var es = o.headers.location.indexOf('errorMessage=');
+            if (es !== -1) o.error = unescape(o.headers.location.substr(es + 13));
+	}
+        // on get method if server redirects to error page, set message as error
+        var es = o.href.indexOf('errorMessage=');
+        if (es !== -1) o.error = unescape(o.href.substr(es + 13));
 	return o;
     })
     .fail(function(p) {
 	return {
 	    error: true,
 	    statusCode: null,
-	    info: 'Request failed',
+	    ststusInfo: 'Request failed',
 	    body: null,
 	    href: uri,
 	    method: t.method,

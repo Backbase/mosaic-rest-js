@@ -15,7 +15,8 @@
 	    port: '7777',
 	    context: 'portalserver',
 	    username: 'admin',
-	    password: 'admin',
+	    password: 'admin', // TODO: do not expose password for frontend version
+            plugin: null,
 	    portal: null
 	}, cnf || {});
     }
@@ -34,10 +35,10 @@
                 target = 'server';
 
             if (typeof item === 'boolean') {
-                a = ['portals', this.config.portal];
+                a = ['portals', this.config.portal, 'catalog'];
                 target = 'portal';
             } else {
-                a = ['server'];
+                a = ['catalog'];
                 if (item) a.push(item);
             }
 	    return new BBReq(target, this.config, a);
@@ -96,7 +97,7 @@
 
     function BBReq(cmnd, cnf, uri) {
 	this.command = cmnd;
-	this.config = cnf;
+	this.config = extend({}, cnf);
 	this.uri = uri;
 	this.qs = {};
 	this.headers = {
@@ -227,22 +228,28 @@ BBReq.prototype.req = function(data) {
     .then(function(p, s, j) {
         var o = {
 	    statusCode: parseInt(j.status),
-	    info: j.statusCode,
+	    statusInfo: j.statusCode,
 	    body: j.responseText,
 	    href: uri,
 	    method: t.method,
 	    reqBody: data
         };
 	if (o.statusCode >= 400) o.error = true;
-	else {
-        }
+	else if (o.statusCode === 302) {
+            // if server redirects to error page, set message as error
+            var es = o.headers.location.indexOf('errorMessage=');
+            if (es !== -1) o.error = unescape(o.headers.location.substr(es + 13));
+	}
+        // on get method if server redirects to error page, set message as error
+        var es = o.href.indexOf('errorMessage=');
+        if (es !== -1) o.error = unescape(o.href.substr(es + 13));
 	return o;
     })
     .fail(function(p) {
 	return {
 	    error: true,
 	    statusCode: null,
-	    info: 'Request failed',
+	    ststusInfo: 'Request failed',
 	    body: null,
 	    href: uri,
 	    method: t.method,
@@ -272,8 +279,8 @@ BBReq.prototype.parseInput = function(inp, params) {
                 };
             });
             break;
-        case 'function':
-            return inp.apply(t, params);
+        case 'object':
+            return this.req(this.config.plugin.apply(this, arguments));
             break;
         default:
 	    return this.req();
