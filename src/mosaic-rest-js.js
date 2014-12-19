@@ -70,10 +70,11 @@
 	    if (groupName) a.push(groupName);
 	    return new BBReq('user', this.config, a);
 	},
-	group: function(groupName, showUsers) {
+	group: function(groupName, showUsers, userName) {
 	    var a = ['groups'];
 	    if (groupName) a.push(groupName);
 	    if (showUsers) a.push('users');
+	    if (userName) a.push(userName);
 	    return new BBReq('group', this.config, a);
 	},
 	template: function(templateName) {
@@ -121,12 +122,16 @@
 	},
 	get: function() {
             /* methods that use .xml:
-             * portal().xml().get() - only this one is exception, the rest of them work without xml extension
+             * portal().xml().get()
              * container('name').xml().get()
              * widget('name').xml().get()
              * page('name').xml().get()
              * link('name').xml().get() */
 	    if (this.uri[0] === 'portals' && this.uri.length === 2) this.uri[1] += '.xml';
+	    if (this.uri[2] === 'pages' && this.uri[3]) this.uri[3] += '.xml';
+	    if (this.uri[2] === 'containers' && this.uri[3]) this.uri[3] += '.xml';
+	    if (this.uri[2] === 'widgets' && this.uri[3]) this.uri[3] += '.xml';
+	    if (this.uri[2] === 'links' && this.uri[3]) this.uri[3] += '.xml';
 	    this.method = 'GET';
 	    return this.req();
 	},
