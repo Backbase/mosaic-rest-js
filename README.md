@@ -99,6 +99,25 @@ bbrest.catalog(true).post('path.to.xml'); // add item(s) to portal catalog
 bbrest.catalog(true).delete('path.to.xml'); // deletes item(s) from portal catalog
 ```
 
+#### page(name:String)
+Prepares page request. [API Reference] (https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_page.html)
+- **name** - name of the page to target
+- *returns* instance of the [BBReq] (#BBReq)
+
+Valid Requests, returning promises:
+```
+bbrest.page().get(); // returns portal pages
+bbrest.page().post('path.to.xml'); // creates page(s)
+bbrest.page().put('path.to.xml'); // updates page(s)
+
+bbrest.page('name').get(); // returns page
+bbrest.page('name').put('path.to.xml'); // updates page
+bbrest.page('name').delete(); // deletes page
+
+bbrest.page('name').rights().get(); // returns page rights
+bbrest.page('name').rights().put('path.to.xml'); // updates page rights
+```
+
 #### container(name:String)
 Prepares container request. [API Reference] (https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_pcat_cont.html)
 - **name** - name of the container to target
@@ -135,25 +154,6 @@ bbrest.widget('name').delete(); // deletes widget
 
 bbrest.widget('name').rights().get(); // returns widget rights
 bbrest.widget('name').rights().put('path.to.xml'); // updates widget rights
-```
-
-#### page(name:String)
-Prepares page request. [API Reference] (https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_page.html)
-- **name** - name of the page to target
-- *returns* instance of the [BBReq] (#BBReq)
-
-Valid Requests, returning promises:
-```
-bbrest.page().get(); // returns portal pages
-bbrest.page().post('path.to.xml'); // creates page(s)
-bbrest.page().put('path.to.xml'); // updates page(s)
-
-bbrest.page('name').get(); // returns page
-bbrest.page('name').put('path.to.xml'); // updates page
-bbrest.page('name').delete(); // deletes page
-
-bbrest.page('name').rights().get(); // returns page rights
-bbrest.page('name').rights().put('path.to.xml'); // updates page rights
 ```
 
 #### link(name:String)
