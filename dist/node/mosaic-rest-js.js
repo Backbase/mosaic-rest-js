@@ -240,7 +240,9 @@ BBReq.prototype.req = function(data) {
             // if server redirects to error page, set message as error
             var es = o.headers.location.indexOf('errorMessage=');
             if (es !== -1) o.error = unescape(o.headers.location.substr(es + 13));
-	}
+	} else if (t.config.plugin && o.body) {
+            o.body = t.config.plugin(o.body);
+        }
         // on get method if server redirects to error page, set message as error
         var es = o.href.indexOf('errorMessage=');
         if (es !== -1) o.error = unescape(o.href.substr(es + 13));
