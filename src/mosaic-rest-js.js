@@ -111,9 +111,10 @@
 	    this.uri.push('rights');
 	    return this;
 	},
-	tag: function(tagName) {
+	tag: function(tagName, tagType) {
 	    this.uri.push('tags');
 	    if (tagName) this.uri.push(tagName);
+            if (tagType) this.qs.type = tagType;
 	    return this;
 	},
 	query: function(o) {
