@@ -47,7 +47,8 @@ BBRest Constructor.
   context: 'portalserver',
   username: 'admin',
   password: 'admin',
-  portal: null // name of the targeted portal
+  portal: null // name of the targeted portal,
+  plugin: null // function to pre-process data
 }
 ```
 #### server()
@@ -291,17 +292,23 @@ Performs GET request
 
 #### post(data)
 Performs POST request
-- **data** - if string, represents path of the xml file which content will be sent
+- **data** - if string, represents path of the xml file which content will be sent. If object, it is first sent to config.plugin function
 - *returns* promise with response value
+``` js
+bbrest.config.plugin = function(data) {
+    return jxon.jsToString(data); // converts js object in jxon notation to XML string which will be posted
+}
+bbrest.widget('myWidget').post(jxonObj);
+```
 
 #### put(data)
 Performs PUT request
-- **data** - if string, represents path of the xml file which content will be sent
+- **data** - if string, represents path of the xml file which content will be sent. If object, it is first sent to config.plugin function
 - *returns* promise with response value
 
 #### delete(data)
 Performs DELETE request
-- **data** - if string, represents path of the xml file which content will be sent
+- **data** - if string, represents path of the xml file which content will be sent. If object, it is first sent to config.plugin function
 - *returns* promise with response value
 
 **response value:**
