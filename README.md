@@ -81,8 +81,8 @@ bbrest.portal().tags().post('path.to.xml'); // creates a tag
 bbrest.portal().tags('myTag').delete(); // deletes a tag
 ```
 #### catalog(item)
-Prepares request on server or portal catalog. [API Reference] (https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_portal.html)
-- **item** - if true, target is portal catalog, if string, target is name of the item in server catalog
+Prepares request on server catalog. [API Reference] (https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_portal.html)
+- **item** - name of the item in server catalog
 - *returns* instance of the [BBReq] (#BBReq)
 
 Valid Requests, returning promises:
@@ -94,10 +94,21 @@ bbrest.catalog().delete('path.to.xml'); // batch delete items from the server ca
 
 bbrest.catalog('myItem').get(); // returns item from the server catalog
 bbrest.catalog('myItem').delete(); // deletes item from the server catalog
+```
+#### portalCatalog(item)
+Prepares request on portal catalog. [API Reference] (https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_portal.html)
+- **item** - name of the item in porta catalog
+- *returns* instance of the [BBReq] (#BBReq)
 
-bbrest.catalog(true).get(); // returns portal catalog
-bbrest.catalog(true).post('path.to.xml'); // add item(s) to portal catalog
-bbrest.catalog(true).delete('path.to.xml'); // deletes item(s) from portal catalog
+Valid Requests, returning promises:
+```
+bbrest.portalCatalog().get(); // returns portal catalog
+bbrest.portalCatalog().post('path.to.xml'); // add item(s) to portal catalog
+bbrest.portalCatalog().put('path.to.xml'); // updates item(s) in portal catalog
+bbrest.portalCatalog().delete('path.to.xml'); // batch delete items from the portal catalog
+
+bbrest.portalCatalog('myItem').get(); // returns item from the portal catalog
+bbrest.portalCatalog('myItem').delete(); // deletes item from the portal catalog
 ```
 
 #### page(name:String)

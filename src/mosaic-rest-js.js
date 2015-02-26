@@ -29,19 +29,15 @@
 	    var a = ['portals', this.config.portal];
 	    return new BBReq('portal', this.config, a);
 	},
-        // if item is boolean target is portal catalog, if string, target is item in server catalog
         catalog: function(item) {
-            var a = [],
-                target = 'server';
-
-            if (typeof item === 'boolean') {
-                a = ['portals', this.config.portal, 'catalog'];
-                target = 'portal';
-            } else {
-                a = ['catalog'];
-                if (item) a.push(item);
-            }
-	    return new BBReq(target, this.config, a);
+            var a = ['catalog'];
+            if (item) a.push(item);
+	    return new BBReq('server', this.config, a);
+        },
+        portalCatalog: function(item) {
+            var a = ['portals', this.config.portal, 'catalog'];
+            if (item) a.push(item);
+	    return new BBReq('portal', this.config, a);
         },
 	container: function(containerName) {
 	    var a = ['portals', this.config.portal, 'containers'];
