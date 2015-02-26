@@ -120,11 +120,13 @@
 	get: function() {
             /* methods that use .xml:
              * portal().xml().get()
+             * portalCatalog('item').get()
              * container('name').xml().get()
              * widget('name').xml().get()
              * page('name').xml().get()
              * link('name').xml().get() */
 	    if (this.uri[0] === 'portals' && this.uri.length === 2) this.uri[1] += '.xml';
+	    if (this.uri[2] === 'catalog' && this.uri[3]) this.uri[3] += '.xml';
 	    if (this.uri[2] === 'pages' && this.uri[3]) this.uri[3] += '.xml';
 	    if (this.uri[2] === 'containers' && this.uri[3]) this.uri[3] += '.xml';
 	    if (this.uri[2] === 'widgets' && this.uri[3]) this.uri[3] += '.xml';
