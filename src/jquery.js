@@ -1,13 +1,29 @@
-var $;
+var $, jxon, stringToJs;
 
 if ( typeof define === "function" && define.amd ) {
-    define( ['jquery'], function (jQuery) { 
+    define( ['jquery', 'jxon'], function (jQuery, jx) { 
         $ = jQuery;
+        jxon = jx;
+        initJxon();
         return BBRest; 
     } );
 } else {
     $ = jQuery;
+    jxon = JXON;
+    initJxon();
     window.BBRest = BBRest;
+}
+
+function initJxon() {
+    jxon.config({
+      valueKey: "_",        // default: 'keyValue'
+      attrKey: "$",         // default: 'keyAttributes'
+      attrPrefix: "$",      // default: '@'
+      lowerCaseTags: false, // default: true
+      trueIsEmpty: false,   // default: true
+      autoDate: false,      // default: true
+      ignorePrefixedNodes: false // default: true
+    });
 }
 
 BBReq.prototype.req = function(data) {
@@ -66,7 +82,7 @@ BBReq.prototype.req = function(data) {
 };
 
 // input default is url with xml
-BBReq.prototype.parseInput = function(inp, params) {
+function getRequestBody(inp, func) {
     var t = this;
     switch (typeof inp) {
         case 'string':
@@ -74,9 +90,6 @@ BBReq.prototype.parseInput = function(inp, params) {
                 type: 'GET',
                 dataType: 'text',
                 url: inp
-            })
-            .then(function(d) {
-                return t.req(d);
             })
             .fail(function(p) {
                 return {
@@ -86,11 +99,16 @@ BBReq.prototype.parseInput = function(inp, params) {
             });
             break;
         case 'object':
-            return this.req(this.config.plugin.apply(this, arguments));
-            break;
+            var d = new $.Deferred();
+            d.resolve(func(inp));
+            return d.promise();
         default:
-	    return this.req();
+            var d = new $.Deferred();
+            d.resolve(inp);
+            return d.promise();
     }
 };
 
-
+function stringToJs(s) {
+    return jxon.stringToJs(s);
+}

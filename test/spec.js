@@ -1,5 +1,91 @@
 
-var r = new BBRest({portal: 'myBraveNewPortal', toJs: true});
+var r = new BBRest({portal: 'myBraveNewPortal'});
+
+describe('Testing auto method', function () {
+
+    it('should do server POST', function () {
+        var j = {portals: { 
+                        portal: { 
+                            contextItemName: '[BBHOST]'
+                        }
+                }},
+            a = r.jxonToObj(j);
+	    assert.deepEqual(a, ['server', 'post']);
+    });
+    it('should do server PUT', function () {
+        var j = {portal: { 
+                            contextItemName: '[BBHOST]'
+                }},
+            a = r.jxonToObj(j);
+	    assert.deepEqual(a, ['server', 'put']);
+    });
+    it('should do server catalog POST', function () {
+        var j = {catalog: { 
+                        widget: { 
+                            contextItemName: '[BBHOST]'
+                        }
+                }},
+            a = r.jxonToObj(j);
+	    assert.deepEqual(a, ['catalog', 'post']);
+    });
+    it('should do server catalog PUT', function () {
+        var j = {catalog: { 
+                        widget: { 
+                            contextItemName: '[BBHOST]'
+                        }
+                }},
+            a = r.jxonToObj(j, 'put');
+	    assert.deepEqual(a, ['catalog', 'put']);
+    });
+    it('should do portal catalog POST', function () {
+        var j = {catalog: { 
+                        widget: { 
+                            contextItemName: 'myPortal'
+                        }
+                }},
+            a = r.jxonToObj(j);
+	    assert.deepEqual(a, ['portalCatalog', 'post']);
+    });
+    it('should do container POST', function () {
+        var j = {containers: { 
+                        container: { 
+                            contextItemName: 'myPortal'
+                        }
+                }},
+            a = r.jxonToObj(j);
+	    assert.deepEqual(a, ['container', 'post']);
+    });
+    it('should do widget PUT', function () {
+        var j = {widget: { 
+                            contextItemName: 'myPortal'
+                }},
+            a = r.jxonToObj(j);
+	    assert.deepEqual(a, ['widget', 'put']);
+    });
+    it('should do user POST', function () {
+        var j = {users: {
+                    user: {
+                            username: 'myName'
+                    }
+                }},
+            a = r.jxonToObj(j);
+	    assert.deepEqual(a, ['user', 'post']);
+    });
+    it('should do user PUT', function () {
+        var j = {user: { 
+                            username: 'myName'
+                }},
+            a = r.jxonToObj(j);
+	    assert.deepEqual(a, ['user', 'put']);
+    });
+
+    it('should auto create a widget', function (done) {
+	r.auto(xmlPath + 'addWidget.xml').then(function(d) {
+	    assert.propertyVal(d, 'statusCode', 204);
+	    done();
+	});
+    });
+});
 
 describe('Testing all cache delete', function () {
 
@@ -104,18 +190,25 @@ describe('Testing widget methods', function () {
 	    done();
 	});
     });
+    it('should delete mywidget', function (done) {
+	r.catalog('mywidget').delete().then(function(d) {
+	    assert.propertyVal(d, 'statusCode', 204);
+	    //var myw = _.find(d.body.widgets.widget, function(w) {return w.name[0] === 'mywidget';});
+	    //console.log(myw.properties[0].property);
+	    done();
+	});
+    });
 
     it('should create a widget', function (done) {
-	r.widget().post(xmlPath + 'addWidget.xml').then(function(d) {
-            console.log(d);
-	    assert.propertyVal(d, 'statusCode', 200);
+	r.portalCatalog().post(xmlPath + 'addWidget.xml').then(function(d) {
+	    assert.propertyVal(d, 'statusCode', 204);
 	    //var myw = _.find(d.body.widgets.widget, function(w) {return w.name[0] === 'mywidget';});
 	    //console.log(myw.properties[0].property);
 	    done();
 	});
     });
     it('should return my widget', function (done) {
-	r.widget('mywidget').xml().get().then(function(d) {
+	r.widget('mywidget').get().then(function(d) {
 	    assert.propertyVal(d, 'statusCode', 200);
 	    //var myw = _.find(d.body.widgets.widget, function(w) {return w.name[0] === 'mywidget';});
 	    //console.log(myw.properties[0].property);

@@ -283,6 +283,15 @@ bbrest.cache('uuidToCacheKeysCache').delete();
 bbrest.cache('versionBundleCache').delete();
 ```
 You can [get bookmarklet] (http://goo.gl/YqOrp8) to delete all caches at once.
+#### auto(data)
+Performs POST or PUT request by finding the right BBRest method from the data.
+- **data** - if string, represents path of the xml file which content will be sent. If object, it is first sent to config.plugin function
+- *returns* promise with response value
+
+Valid Request, returning promises:
+```
+bbrest.auto('path.to.xml');
+```
 ## BBReq methods
 #### rights()
 Modifies request to target rights.

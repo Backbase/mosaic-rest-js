@@ -88,7 +88,52 @@
 	import: function() {
 	},
 	export: function() {
-	}
+	},
+        auto: function(d, method) {
+            var t = this;
+	    return getRequestBody(d, this.config.plugin).then(function(r) {
+                if (typeof r === "string") r = stringToJs(r);
+                var a = t.jxonToObj(r, method);
+                return t[a[0]]()[a[1]](d);
+            });        
+        },
+        jxonToObj: function(j, method) {
+            var aKey, bKey, plural, context, a = [],
+                items = ['container', 'widget', 'page', 'link', 'template', 'user', 'group'];
+            for (aKey in j) {
+                for (bKey in j[aKey]) break;
+                context = j[aKey][bKey].contextItemName;
+
+                switch (aKey) {
+                    case 'catalog':
+                        if (context === '[BBHOST]') a.push('catalog', 'post');
+                        else a.push('portalCatalog', 'post');
+                        break;
+                    case 'portals':
+                        a.push('server', 'post');
+                        break;
+                    case 'portal':
+                        a.push('server', 'put');
+                        break;
+                    default:
+                        plural = aKey.charAt(aKey.length - 1) === 's';
+                        if (plural) {
+                            if (aKey.substr(0, aKey.length - 1) === bKey) {
+                                a.push(bKey, 'post');
+                            } else {
+                                throw new Error(aKey + ' must be plural of ' + bKey);
+                            }
+                        } else {
+                            if (items.indexOf(aKey) !== -1) a.push(aKey, 'put');
+                            else a.push(aKey, 'post');
+                        }
+                        break;
+                }
+                break;
+            }
+            if (method) a[1] = method;
+            return a;
+        }
 
     });
 
@@ -134,19 +179,19 @@
 	    this.method = 'GET';
 	    return this.req();
 	},
-	post: function(d, p) {
+	post: function(d) {
 	    this.method = 'POST';
-	    return this.parseInput(d, p);
+            return this.doRequest(d);
 	},
-	put: function(d, p) {
+	put: function(d) {
 	    this.method = 'PUT';
-	    return this.parseInput(d, p);
+            return this.doRequest(d);
 	},
 	// fixing inconsistencies in API
 	// server /delete/catalog POST
 	// portal /portals/[portal_name]/delete/catalog POST
 	// link /portals/[portal_name]/delete/links POST
-	delete: function(v, p) {
+	delete: function(v) {
 	    this.method = 'DELETE';
 	    if (v) {
 		this.method = 'POST';
@@ -169,8 +214,14 @@
             if (this.command === 'cache' && this.uri[1] === 'all') {
                 return this.deleteAllCache(0);
             }
-	    return this.parseInput(v, p);
+            return this.doRequest(v);
 	},
+        doRequest: function(d) {
+            var t = this;
+	    return getRequestBody(d, this.config.plugin).then(function(r) {
+                return t.req(r);
+            });
+        },
         deleteAllCache: function(i) {
             var t = this;
             this.uri[1] = cch[i];
@@ -198,16 +249,32 @@ var cch = ['globalModelCache',
         'uuidToCacheKeysCache',
         'versionBundleCache'];
 
-var $;
+var $, jxon, stringToJs;
 
 if ( typeof define === "function" && define.amd ) {
-    define( ['jquery'], function (jQuery) { 
+    define( ['jquery', 'jxon'], function (jQuery, jx) { 
         $ = jQuery;
+        jxon = jx;
+        initJxon();
         return BBRest; 
     } );
 } else {
     $ = jQuery;
+    jxon = JXON;
+    initJxon();
     window.BBRest = BBRest;
+}
+
+function initJxon() {
+    jxon.config({
+      valueKey: "_",        // default: 'keyValue'
+      attrKey: "$",         // default: 'keyAttributes'
+      attrPrefix: "$",      // default: '@'
+      lowerCaseTags: false, // default: true
+      trueIsEmpty: false,   // default: true
+      autoDate: false,      // default: true
+      ignorePrefixedNodes: false // default: true
+    });
 }
 
 BBReq.prototype.req = function(data) {
@@ -266,7 +333,7 @@ BBReq.prototype.req = function(data) {
 };
 
 // input default is url with xml
-BBReq.prototype.parseInput = function(inp, params) {
+function getRequestBody(inp, func) {
     var t = this;
     switch (typeof inp) {
         case 'string':
@@ -274,9 +341,6 @@ BBReq.prototype.parseInput = function(inp, params) {
                 type: 'GET',
                 dataType: 'text',
                 url: inp
-            })
-            .then(function(d) {
-                return t.req(d);
             })
             .fail(function(p) {
                 return {
@@ -286,14 +350,19 @@ BBReq.prototype.parseInput = function(inp, params) {
             });
             break;
         case 'object':
-            return this.req(this.config.plugin.apply(this, arguments));
-            break;
+            var d = new $.Deferred();
+            d.resolve(func(inp));
+            return d.promise();
         default:
-	    return this.req();
+            var d = new $.Deferred();
+            d.resolve(inp);
+            return d.promise();
     }
 };
 
-
+function stringToJs(s) {
+    return jxon.stringToJs(s);
+}
 
 	
 	

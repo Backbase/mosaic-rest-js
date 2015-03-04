@@ -1,7 +1,18 @@
 var request = require('request'),
     Q = require('q'),
+    jxon = require('jxon'),
     readFile = Q.denodeify(require('fs').readFile),
     qReq = Q.denodeify(request);
+
+jxon.config({
+  valueKey: "_",
+  attrKey: "$",
+  attrPrefix: "$",
+  lowerCaseTags: false,
+  trueIsEmpty: false,
+  autoDate: false,
+  ignorePrefixedNodes: false
+});
 
 module.exports = BBRest;
 BBReq.prototype.req = function(data) {
@@ -11,7 +22,6 @@ BBReq.prototype.req = function(data) {
 	      this.config.port + '/' +
 	      this.config.context + '/' +
 	      this.uri.join('/');
-
     return qReq({
 	auth: {
 	    username: this.config.username,
@@ -61,14 +71,13 @@ BBReq.prototype.req = function(data) {
     }); 
 };
 
-BBReq.prototype.parseInput = function(inp, params) {
+function getRequestBody(inp, plugin) {
     var t = this;
     switch (typeof inp) {
         case 'string':
-            this.file = inp;
             return readFile(inp)
             .then(function(d) {
-                return t.req(d.toString());
+                return d.toString();
             })
             .fail(function(p) {
                 return {
@@ -78,11 +87,14 @@ BBReq.prototype.parseInput = function(inp, params) {
             });
             break;
         case 'object':
-            return this.req(this.config.plugin.apply(this, arguments));
-            break;
+            return Q(func(inp));
         default:
-	    return this.req(inp);
+            return Q(inp);
     }
 };
+
+function stringToJs(s) {
+    return jxon.stringToJs(s);
+}
 
 

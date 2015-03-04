@@ -15,8 +15,8 @@
   "author": "Igor Dimitrijevic",
   "main": "dist/node/mosaic-rest-js.js",
   "dependencies": {
+    "jxon": "^1.3.1",
     "q": "^1.1.1",
-    "lodash": "^2.4.1",
     "request": "2.48.0"
   },
   "devDependencies": {
@@ -30,6 +30,7 @@
     "gulp-spawn-mocha": "^0.5.1",
     "gulp-uglify": "^1.0.1",
     "istanbul": "^0.3.4",
+    "lodash": "^2.4.1",
     "mocha": "^2.0.1"
   }
 }

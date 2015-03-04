@@ -88,7 +88,52 @@
 	import: function() {
 	},
 	export: function() {
-	}
+	},
+        auto: function(d, method) {
+            var t = this;
+	    return getRequestBody(d, this.config.plugin).then(function(r) {
+                if (typeof r === "string") r = stringToJs(r);
+                var a = t.jxonToObj(r, method);
+                return t[a[0]]()[a[1]](d);
+            });        
+        },
+        jxonToObj: function(j, method) {
+            var aKey, bKey, plural, context, a = [],
+                items = ['container', 'widget', 'page', 'link', 'template', 'user', 'group'];
+            for (aKey in j) {
+                for (bKey in j[aKey]) break;
+                context = j[aKey][bKey].contextItemName;
+
+                switch (aKey) {
+                    case 'catalog':
+                        if (context === '[BBHOST]') a.push('catalog', 'post');
+                        else a.push('portalCatalog', 'post');
+                        break;
+                    case 'portals':
+                        a.push('server', 'post');
+                        break;
+                    case 'portal':
+                        a.push('server', 'put');
+                        break;
+                    default:
+                        plural = aKey.charAt(aKey.length - 1) === 's';
+                        if (plural) {
+                            if (aKey.substr(0, aKey.length - 1) === bKey) {
+                                a.push(bKey, 'post');
+                            } else {
+                                throw new Error(aKey + ' must be plural of ' + bKey);
+                            }
+                        } else {
+                            if (items.indexOf(aKey) !== -1) a.push(aKey, 'put');
+                            else a.push(aKey, 'post');
+                        }
+                        break;
+                }
+                break;
+            }
+            if (method) a[1] = method;
+            return a;
+        }
 
     });
 
@@ -134,19 +179,19 @@
 	    this.method = 'GET';
 	    return this.req();
 	},
-	post: function(d, p) {
+	post: function(d) {
 	    this.method = 'POST';
-	    return this.parseInput(d, p);
+            return this.doRequest(d);
 	},
-	put: function(d, p) {
+	put: function(d) {
 	    this.method = 'PUT';
-	    return this.parseInput(d, p);
+            return this.doRequest(d);
 	},
 	// fixing inconsistencies in API
 	// server /delete/catalog POST
 	// portal /portals/[portal_name]/delete/catalog POST
 	// link /portals/[portal_name]/delete/links POST
-	delete: function(v, p) {
+	delete: function(v) {
 	    this.method = 'DELETE';
 	    if (v) {
 		this.method = 'POST';
@@ -169,8 +214,14 @@
             if (this.command === 'cache' && this.uri[1] === 'all') {
                 return this.deleteAllCache(0);
             }
-	    return this.parseInput(v, p);
+            return this.doRequest(v);
 	},
+        doRequest: function(d) {
+            var t = this;
+	    return getRequestBody(d, this.config.plugin).then(function(r) {
+                return t.req(r);
+            });
+        },
         deleteAllCache: function(i) {
             var t = this;
             this.uri[1] = cch[i];
@@ -200,8 +251,19 @@ var cch = ['globalModelCache',
 
 var request = require('request'),
     Q = require('q'),
+    jxon = require('jxon'),
     readFile = Q.denodeify(require('fs').readFile),
     qReq = Q.denodeify(request);
+
+jxon.config({
+  valueKey: "_",
+  attrKey: "$",
+  attrPrefix: "$",
+  lowerCaseTags: false,
+  trueIsEmpty: false,
+  autoDate: false,
+  ignorePrefixedNodes: false
+});
 
 module.exports = BBRest;
 BBReq.prototype.req = function(data) {
@@ -211,7 +273,6 @@ BBReq.prototype.req = function(data) {
 	      this.config.port + '/' +
 	      this.config.context + '/' +
 	      this.uri.join('/');
-
     return qReq({
 	auth: {
 	    username: this.config.username,
@@ -261,14 +322,13 @@ BBReq.prototype.req = function(data) {
     }); 
 };
 
-BBReq.prototype.parseInput = function(inp, params) {
+function getRequestBody(inp, plugin) {
     var t = this;
     switch (typeof inp) {
         case 'string':
-            this.file = inp;
             return readFile(inp)
             .then(function(d) {
-                return t.req(d.toString());
+                return d.toString();
             })
             .fail(function(p) {
                 return {
@@ -278,12 +338,15 @@ BBReq.prototype.parseInput = function(inp, params) {
             });
             break;
         case 'object':
-            return this.req(this.config.plugin.apply(this, arguments));
-            break;
+            return Q(func(inp));
         default:
-	    return this.req(inp);
+            return Q(inp);
     }
 };
+
+function stringToJs(s) {
+    return jxon.stringToJs(s);
+}
 
 
 
