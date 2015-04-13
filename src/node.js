@@ -17,7 +17,7 @@ jxon.config({
 module.exports = BBRest;
 BBReq.prototype.req = function(data) {
     var t = this,
-	uri = 'http://' + 
+	uri = 'http://' +
 	      this.config.host + ':' +
 	      this.config.port + '/' +
 	      this.config.context + '/' +
@@ -68,18 +68,17 @@ BBReq.prototype.req = function(data) {
 	    reqBody: data,
 	    file: t.file || null
 	};
-    }); 
+    });
 };
 
 function getRequestBody(inp, plugin) {
-    var t = this;
     switch (typeof inp) {
         case 'string':
             return readFile(inp)
             .then(function(d) {
                 return d.toString();
             })
-            .fail(function(p) {
+            .fail(function() {
                 return {
                     error: true,
                     info: 'File path is wrong'
@@ -87,7 +86,7 @@ function getRequestBody(inp, plugin) {
             });
             break;
         case 'object':
-            return Q(func(inp));
+            return Q(plugin(inp));
         default:
             return Q(inp);
     }
