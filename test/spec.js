@@ -22,14 +22,6 @@ describe('Testing server and portal methods', function () {
 	});
     });
 
-    it("should remove testing portal if it exists", function(done) {
-        r.portal().delete().then(function(d) {
-            assert.propertyVal(d, 'statusCode', 204);
-            done();
-        });
-    	
-    });
-    
     it('should add testing portal', function (done) {
 	r.server().post(xmlPath + 'addPortal.xml').then(function(d) {
 	    assert.propertyVal(d, 'statusCode', 201);
@@ -223,4 +215,20 @@ describe('Testing all cache delete', function () {
 	});
     });
 
+});
+
+
+describe('Clean up...', function () {
+
+    before(function () {
+    });
+
+    it("should remove testing portal", function(done) {
+        r.portal().delete().then(function(d) {
+            assert.propertyVal(d, 'statusCode', 204);
+            done();
+        });
+    	
+    });
+    
 });
