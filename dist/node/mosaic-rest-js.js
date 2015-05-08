@@ -288,18 +288,23 @@ BBReq.prototype.req = function(data) {
               this.config.host + ':' +
 	      this.config.port + '/' +
 	      this.config.context + '/' +
-	      this.uri.join('/');
-    return qReq({
-	auth: {
+	      this.uri.join('/'),
+        reqP = {
+            uri: uri,
+            qs: this.qs,
+            method: this.method,
+            headers: this.headers,
+            body: data || ''
+        };
+
+    if (this.config.username !== null) {
+        reqP.auth = {
             username: this.config.username,
             password: this.config.password
-	},
-	uri: uri,
-	qs: this.qs,
-	method: this.method,
-	headers: this.headers,
-	body: data || ''
-    })
+        };
+    }
+
+    return qReq(reqP)
     .then(function(p) {
 	var o = {
             statusCode: parseInt(p[0].statusCode),

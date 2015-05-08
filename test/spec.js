@@ -17,7 +17,7 @@ describe('Testing server and portal methods', function () {
     it('should return portal list', function (done) {
 	r.server().get().then(function(v) {
             assert.propertyVal(v, 'statusCode', 200);
-            //assert.deepPropertyVal(v, 'body.portals.portal.length', 3);
+            if (typeof window !== 'undefined') r.config.username = null; // don't do authorization in  browser
             done();
 	});
     });

@@ -12,7 +12,9 @@ BBReq.prototype.req = function(data) {
         qs = $.param(this.qs);
 
     if (qs) uri += '?' + qs;
-    this.headers.Authorization = 'Basic ' + btoa(this.config.username + ':' + this.config.password);
+    if (this.config.username !== null) {
+        this.headers.Authorization = 'Basic ' + btoa(this.config.username + ':' + this.config.password);
+    }
 
     return $.ajax({
 	type: this.method,

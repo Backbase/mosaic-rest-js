@@ -42,7 +42,7 @@
             port: '7777',
             context: 'portalserver',
             username: 'admin',
-            password: 'admin', // TODO: do not expose password for frontend version
+            password: 'admin',
             plugin: null,
             portal: null
 	}, cnf || {});
