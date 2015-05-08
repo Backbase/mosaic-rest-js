@@ -7,10 +7,10 @@ var qReq = Q.denodeify(request);
 BBReq.prototype.req = function(data) {
     var t = this,
 	uri = 'http://' +
-            this.config.host + ':' +
-            this.config.port + '/' +
-             this.config.context + '/' +
-            this.uri.join('/');
+              this.config.host + ':' +
+	      this.config.port + '/' +
+	      this.config.context + '/' +
+	      this.uri.join('/');
     return qReq({
 	auth: {
             username: this.config.username,
@@ -60,7 +60,7 @@ BBReq.prototype.req = function(data) {
     });
 };
 
-function getRequestBody(inp, func) {
+function getRequestBody(inp, plugin) {
     switch (typeof inp) {
         case 'string':
             return readFile(inp)
@@ -74,7 +74,7 @@ function getRequestBody(inp, func) {
                 };
             });
         case 'object':
-            return Q(func(inp));
+            return Q(plugin(inp));
         default:
             return Q(inp);
     }
