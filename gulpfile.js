@@ -48,9 +48,7 @@ gulp.task('test-jq', ['jquery'], function () {
     .pipe(phantom({
         phantomjs: {
             settings: {
-                localToRemoteUrlAccessEnabled: true,
-                userName: 'admin',
-                password: 'admin'
+                localToRemoteUrlAccessEnabled: true
             }
         }
     }));
