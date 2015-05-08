@@ -5,12 +5,24 @@ js library for Backbase [REST API] (https://my.backbase.com/resources/documentat
 
 ## Example:
 
+#### nodejs
 ```js
 var BBRest = require('mosaic-rest-js'),
- bbrest = new BBRest({
+var bbrest = new BBRest({
    portal: 'myPortal'
  });
+```
 
+#### AMD module
+```js
+require(['bbrest'], function(BBRest) {
+  var bbrest = new BBRest({
+    portal: 'myPortal'
+  });
+})
+```
+
+```js
 // list portals
 bbrest.server().get().then(function(value) {
  if (value.statusCode === 200) {
@@ -32,6 +44,18 @@ bbrest.server().put('updatePortal.xml').then(function(d) {
 bbrest.catalog().query({ps:5}).get().then(function(d) {
  console.log(d);
 });
+```
+
+## Automation:
+
+```js
+npm install // install nodejs dependencies
+bower install // install bower dependecies
+gulp node // build node distribution file
+gulp jquery // build browser jQuery based ditribution file
+gulp min // minify browser distribution file
+gulp test-node // run node tests (requires running portal)
+gulp test-jq // run phantomjs tests (requires running portal)
 ```
 
 ## BBRest methods

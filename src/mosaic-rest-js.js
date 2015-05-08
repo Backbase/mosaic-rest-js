@@ -1,6 +1,32 @@
-/*global getRequestBody, stringToJs*/
-(function(window){
+/*global define, module, require, JXON, getRequestBody, stringToJs*/
+
+(function (root, factory) {
 'use strict';
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+        define(['jxon', 'jquery'], factory);
+    } else if (typeof exports === 'object') {
+        // Node. Does not work with strict CommonJS, but
+        // only CommonJS-like environments that support module.exports,
+        // like Node.
+        module.exports = factory(require('jxon'), require('request'), require('q'));
+    } else {
+        // Browser globals (root is window)
+        root.BBRest = factory(JXON, jQuery);
+    }
+}(this, function (jxon, p1, p2) {
+'use strict';
+
+    // do not change to single quotes! gulp-file-include is not working with single quotes
+    jxon.config({
+      valueKey: "_",
+      attrKey: "$",
+      attrPrefix: "$",
+      lowerCaseTags: false,
+      trueIsEmpty: false,
+      autoDate: false,
+      ignorePrefixedNodes: false
+    });
 
     function extend() {
 	var i, j, a = arguments;
@@ -253,4 +279,5 @@ var cch = ['globalModelCache',
 /* include */
 
 
-})(this);
+return BBRest;
+}));

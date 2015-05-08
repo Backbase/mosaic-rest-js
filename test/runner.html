@@ -10,26 +10,36 @@
   <body>
     <div id="mocha"></div>
     <script src="../bower_components/mocha/mocha.js"></script>
-    <script src="../bower_components/chai/chai.js"></script>
-    <script src="../bower_components/jquery/jquery.js"></script>
-    <script src="../bower_components/lodash/dist/lodash.js"></script>
-    <script src="../bower_components/jxon/index.js"></script>
-    <script src="../dist/jquery/mosaic-rest-js.js"></script>
+    <script src="../bower_components/requirejs-bower/require.js"></script>
     <script>mocha.setup('bdd')</script>
     <script src="../test/spec.js"></script>
     <script>
 
         xmlPath = './xml/';
-        expect = chai.expect;
-        AssertionError = chai.AssertionError;
-        Assertion = chai.Assertion;
-        assert = chai.assert;
-        should = chai.should;
-        if (window.mochaPhantomJS) {
-            mochaPhantomJS.run();
-        } else {
-            mocha.run();
-        }
+
+        require.config({
+            baseUrl: "",
+            paths: {
+                "chai": "../bower_components/chai/chai",
+                "jquery": "../bower_components/jquery/jquery",
+                "lodash": "../bower_components/lodash/lodash",
+                "jxon": "../bower_components/jxon/index",
+                "bbrest": "../dist/jquery/mosaic-rest-js"
+            },
+            waitSeconds: 15
+        });
+        require(['chai', 'bbrest'], function(chai, BBRest) {
+            expect = chai.expect;
+            AssertionError = chai.AssertionError;
+            Assertion = chai.Assertion;
+            assert = chai.assert;
+            should = chai.should;
+            if (window.mochaPhantomJS) {
+                mochaPhantomJS.run();
+            } else {
+                mocha.run();
+            }
+        });
     </script>
   </body>
 </html>

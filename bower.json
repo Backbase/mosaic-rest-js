@@ -8,6 +8,7 @@
   "devDependencies": {
     "mocha": "^2.0.1",
     "chai": "^1.10.0",
-    "lodash": "~2.4.1"
+    "lodash": "~3.8.0",
+    "requirejs-bower": "~2.1.17"
   }
 }
