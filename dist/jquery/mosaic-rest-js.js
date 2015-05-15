@@ -42,7 +42,7 @@
             port: '7777',
             context: 'portalserver',
             username: 'admin',
-            password: 'admin', // TODO: do not expose password for frontend version
+            password: 'admin',
             plugin: null,
             portal: null
 	}, cnf || {});
@@ -113,6 +113,8 @@
             return new BBReq('cache', this.config, a);
 	},
 	import: function() {
+		var a = ['import','portal'];
+		return new BBReq('import', this.config, a);
 	},
 	export: function() {
 	},
