@@ -66,6 +66,11 @@
             if (item) a.push(item);
             return new BBReq('portal', this.config, a);
         },
+        exportBundle: function(portal) {
+            var a = ['import','portal'];
+            return new BBReq('exportBundle', this.config, a);
+
+        },
 	container: function(containerName) {
             var a = ['portals', this.config.portal, 'containers'];
             if (containerName) a.push(containerName);
