@@ -1,7 +1,7 @@
-mosaic-rest-js
-=========
+#mosaic-rest-js
 
-js library for Backbase [REST API] (https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest.html)
+### About
+This is a js library for Backbase [REST API] (https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest.html).
 
 ## Example:
 
