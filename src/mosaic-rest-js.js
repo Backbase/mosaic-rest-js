@@ -4,7 +4,7 @@
 'use strict';
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(['jxon', 'jquery'], factory);
+        define(['jxon', '#lib#'], factory);
     } else if (typeof exports === 'object') {
         // Node. Does not work with strict CommonJS, but
         // only CommonJS-like environments that support module.exports,
@@ -12,7 +12,7 @@
         module.exports = factory(require('jxon'), require('request'), require('q'));
     } else {
         // Browser globals (root is window)
-        root.BBRest = factory(JXON, jQuery);
+        root.BBRest = factory(JXON, '#lib_global#');
     }
 }(this, function (jxon, p1, p2) {
 'use strict';

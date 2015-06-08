@@ -4,7 +4,7 @@
 'use strict';
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(['jxon', 'jquery'], factory);
+        define(['jxon', 'angular'], factory);
     } else if (typeof exports === 'object') {
         // Node. Does not work with strict CommonJS, but
         // only CommonJS-like environments that support module.exports,
@@ -12,7 +12,7 @@
         module.exports = factory(require('jxon'), require('request'), require('q'));
     } else {
         // Browser globals (root is window)
-        root.BBRest = factory(JXON, jQuery);
+        root.BBRest = factory(JXON, angular);
     }
 }(this, function (jxon, p1, p2) {
 'use strict';
@@ -278,34 +278,41 @@ var cch = ['globalModelCache',
 
 /*global define, jQuery, jxon, p1, BBRest, BBReq, btoa*/
 'use strict';
-var $ = p1;
+var ng = p1;
+var ngHttp = ng.injector(['ng']).get('$http');
+var ngQ = ng.injector(['ng']).get('$q');
+
+
+// ng.injector(['ng']).invoke(function($http, $q) {
+//     ngHttp = $http;
+//     ngQ = $q;
+// });
 
 BBReq.prototype.req = function(data) {
+    //throw new Error(typeof ngHttp.get);
     var t = this,
 	uri = 'http://' +
             this.config.host + ':' +
             this.config.port + '/' +
             this.config.context + '/' +
-            this.uri.join('/'),
-        qs = $.param(this.qs);
+            this.uri.join('/');
 
-    if (qs) uri += '?' + qs;
     if (this.config.username !== null) {
         this.headers.Authorization = 'Basic ' + btoa(this.config.username + ':' + this.config.password);
     }
 
-    return $.ajax({
-	type: this.method,
-	url: uri,
-        dataType: 'xml',
-	headers: this.headers,
-	data: data || ''
+    return ngHttp({
+        method: this.method,
+        url: uri,
+        data: data || '',
+        params: this.qs,
+        headers: this.headers
     })
-    .then(function(p, s, j) {
+    .then(function(d) {
         var o = {
-            statusCode: parseInt(j.status),
-            statusInfo: j.statusCode,
-            body: j.responseText,
+            statusCode: d.status,
+            statusInfo: d.statusText,
+            body: d.data,
             href: uri,
             method: t.method,
             reqBody: data
@@ -323,12 +330,12 @@ BBReq.prototype.req = function(data) {
         if (es !== -1) o.error = unescape(o.href.substr(es + 13));
 	return o;
     })
-    .fail(function() {
+    .catch(function(e) {
 	return {
             error: true,
-            statusCode: null,
-            ststusInfo: 'Request failed',
-            body: null,
+            statusCode: e.status,
+            ststusInfo: e.statusText,
+            body: e.data,
             href: uri,
             method: t.method,
             reqBody: data,
@@ -342,31 +349,31 @@ function getRequestBody(inp, func) {
     var d;
     switch (typeof inp) {
         case 'string':
-            return $.ajax({
-                type: 'GET',
-                dataType: 'text',
-                url: inp
+            return ngHttp.get(inp)
+            .then(function(d) {
+                return d.data;
             })
-            .fail(function() {
+            .catch(function() {
                 return {
                     error: true,
                     info: 'Wrong URL'
                 };
             });
         case 'object':
-            d = new $.Deferred();
+            d = ngQ.defer();
             d.resolve(func(inp));
-            return d.promise();
+            return d.promise;
         default:
-            d = new $.Deferred();
+            d = ngQ.defer();
             d.resolve(inp);
-            return d.promise();
+            return d.promise;
     }
 }
 
 function stringToJs(s) {
     return jxon.stringToJs(s);
 }
+
 
 
 

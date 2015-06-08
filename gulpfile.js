@@ -1,5 +1,6 @@
 var gulp = require('gulp'),
     gfi = require('gulp-file-insert'),
+    replace = require('gulp-replace'),
     rename = require('gulp-rename'),
     uglify = require('gulp-uglify'),
     jshint = require('gulp-jshint'),
@@ -20,13 +21,24 @@ gulp.task('node', function() {
 });
 gulp.task('jquery', function() {
     return gulp.src('src/mosaic-rest-js.js')
+    .pipe(replace("'#lib#'", "'jquery'"))
+    .pipe(replace("'#lib_global#'", 'jQuery'))
     .pipe(gfi({
         "/* include */": "src/jquery.js",
     }))
     .pipe(gulp.dest('./dist/jquery/'));
 });
-gulp.task('min', ['jquery'], function() {
-    return gulp.src(['./dist/jquery/mosaic-rest-js.js'])
+gulp.task('angular', function() {
+    return gulp.src('src/mosaic-rest-js.js')
+    .pipe(replace("'#lib#'", "'angular'"))
+    .pipe(replace("'#lib_global#'", 'angular'))
+    .pipe(gfi({
+        "/* include */": "src/angular.js",
+    }))
+    .pipe(gulp.dest('./dist/angular/'));
+});
+gulp.task('min', ['jquery', 'angular'], function() {
+    return gulp.src(['./dist/jquery/mosaic-rest-js.js', './dist/angular/mosaic-rest-js.js'])
     .pipe(uglify())
     .pipe(rename(function(path) {
         path.basename += '.min';
@@ -44,7 +56,18 @@ gulp.task('test-node', ['node'], function () {
 });
 gulp.task('test-jq', ['jquery'], function () {
     return gulp
-    .src('test/runner.html')
+    .src('test/runner_jquery.html')
+    .pipe(phantom({
+        phantomjs: {
+            settings: {
+                localToRemoteUrlAccessEnabled: true
+            }
+        }
+    }));
+});
+gulp.task('test-ng', ['angular'], function () {
+    return gulp
+    .src('test/runner_angular.html')
     .pipe(phantom({
         phantomjs: {
             settings: {

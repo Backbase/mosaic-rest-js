@@ -27,6 +27,7 @@
     "gulp-jshint": "^1.9.0",
     "gulp-mocha-phantomjs": "^0.5.1",
     "gulp-rename": "^1.2.0",
+    "gulp-replace": "^0.5.3",
     "gulp-spawn-mocha": "^0.5.1",
     "gulp-uglify": "^1.0.1",
     "istanbul": "^0.3.4",

@@ -53,9 +53,11 @@ npm install // install nodejs dependencies
 bower install // install bower dependecies
 gulp node // build node distribution file
 gulp jquery // build browser jQuery based ditribution file
-gulp min // minify browser distribution file
+gulp angular // build browser Angular based ditribution file
+gulp min // minify browser distribution files
 gulp test-node // run node tests (requires running portal)
-gulp test-jq // run phantomjs tests (requires running portal)
+gulp test-jq // run jQuery phantomjs tests (requires running portal)
+gulp test-ng // run Angular phantomjs tests (requires running portal)
 ```
 
 ## BBRest methods

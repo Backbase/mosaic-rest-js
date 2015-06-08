@@ -24,8 +24,8 @@ describe('Testing server and portal methods', function () {
 
     it('should add testing portal', function (done) {
 	r.server().post(xmlPath + 'addPortal.xml').then(function(d) {
-	    assert.propertyVal(d, 'statusCode', 201);
-	    done();
+            assert.isBelow(d.statusCode, 300);
+            done();
 	});
     });
 
@@ -100,7 +100,7 @@ describe('Testing widget methods', function () {
 
     it('should create a widget', function (done) {
 	r.portalCatalog().post(xmlPath + 'addWidget.xml').then(function(d) {
-	    assert.propertyVal(d, 'statusCode', 204);
+            assert.isBelow(d.statusCode, 300);
 	    //var myw = _.find(d.body.widgets.widget, function(w) {return w.name[0] === 'mywidget';});
 	    //console.log(myw.properties[0].property);
 	    done();
@@ -196,7 +196,7 @@ describe('Testing auto method', function () {
 
     it('should auto create a widget', function (done) {
 	r.auto(xmlPath + 'addWidget.xml').then(function(d) {
-	    assert.propertyVal(d, 'statusCode', 204);
+            assert.isBelow(d.statusCode, 300);
 	    done();
 	});
     });

@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mocha Test Runner</title>
+    <link rel="stylesheet" href="../bower_components/mocha/mocha.css">
+  </head>
+  <body>
+    <div id="mocha"></div>
+    <script src="../bower_components/mocha/mocha.js"></script>
+    <script src="../bower_components/requirejs-bower/require.js"></script>
+    <script>mocha.setup('bdd')</script>
+    <script src="../test/spec.js"></script>
+    <script>
+
+        xmlPath = './xml/';
+
+        require.config({
+            baseUrl: "",
+            paths: {
+                "angular": "../bower_components/angular/angular",
+                "chai": "../bower_components/chai/chai",
+                "lodash": "../bower_components/lodash/lodash",
+                "jxon": "../bower_components/jxon/index",
+                "bbrest": "../dist/angular/mosaic-rest-js"
+            },
+            shim: {
+                "angular": {exports: "angular"}
+            },
+            waitSeconds: 15
+        });
+        require(['chai', 'bbrest'], function(chai, BBRest) {
+            expect = chai.expect;
+            AssertionError = chai.AssertionError;
+            Assertion = chai.Assertion;
+            assert = chai.assert;
+            should = chai.should;
+            if (window.mochaPhantomJS) {
+                mochaPhantomJS.run();
+            } else {
+                mocha.run();
+            }
+        });
+    </script>
+  </body>
+</html>
