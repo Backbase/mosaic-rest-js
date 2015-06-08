@@ -113,6 +113,8 @@
             return new BBReq('cache', this.config, a);
 	},
 	import: function() {
+            var a = ['import', 'portal'];
+            return new BBReq('import', this.config, a);
 	},
 	export: function() {
 	},
