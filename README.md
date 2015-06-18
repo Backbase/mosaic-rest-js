@@ -1,12 +1,13 @@
 #mosaic-rest-js
 
 ### About
-This is a js library for Backbase [REST API] (https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest.html).
+This is a js library for Backbase [REST API](https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest.html).
 
 ## Example:
 
 #### nodejs
-```js
+
+``` javascript
 var BBRest = require('mosaic-rest-js'),
 var bbrest = new BBRest({
    portal: 'myPortal'
@@ -14,7 +15,8 @@ var bbrest = new BBRest({
 ```
 
 #### AMD module
-```js
+
+``` javascript
 require(['bbrest'], function(BBRest) {
   var bbrest = new BBRest({
     portal: 'myPortal'
@@ -22,7 +24,7 @@ require(['bbrest'], function(BBRest) {
 })
 ```
 
-```js
+``` javascript
 // list portals
 bbrest.server().get().then(function(value) {
  if (value.statusCode === 200) {
@@ -48,7 +50,7 @@ bbrest.catalog().query({ps:5}).get().then(function(d) {
 
 ## Automation:
 
-```js
+```
 npm install // install nodejs dependencies
 bower install // install bower dependecies
 gulp node // build node distribution file
@@ -66,7 +68,8 @@ BBRest Constructor.
 - config - *extends default configuration*
 
 **configuration defaults:**
-```
+
+``` javascript
 {
   host: 'localhost', 
   port: '7777',
@@ -77,23 +80,26 @@ BBRest Constructor.
   plugin: null // function to pre-process data
 }
 ```
+
 #### server()
-Prepares request on server domain. [API Reference] (https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_portal.html)
-- *returns* instance of the [BBReq] (#BBReq)
+Prepares request on server domain. [API Reference](https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_portal.html)
+- *returns* instance of the [BBReq](#BBReq)
 
 Valid Requests, returning promises:
-```
+
+``` javascript
 bbrest.server().get(); // returns list of portals
 bbrest.server().post('path.to.xml'); // creates a portal
 bbrest.server().put('path.to.xml'); // updates portal(s)
 ```
 
 #### portal()
-Prepares request on portal domain. [API Reference] (https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_portal.html)
-- *returns* instance of the [BBReq] (#BBReq)
+Prepares request on portal domain. [API Reference](https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_portal.html)
+- *returns* instance of the [BBReq](#BBReq)
 
 Valid Requests, returning promises:
-```
+
+``` javascript
 bbrest.portal().put('path.to.xml'); // updates portal
 bbrest.portal().delete(); // deletes the portal
 
@@ -107,12 +113,13 @@ bbrest.portal().tags().post('path.to.xml'); // creates a tag
 bbrest.portal().tags('myTag').delete(); // deletes a tag
 ```
 #### catalog(item)
-Prepares request on server catalog. [API Reference] (https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_portal.html)
+Prepares request on server catalog. [API Reference](https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_portal.html)
 - **item** - name of the item in server catalog
-- *returns* instance of the [BBReq] (#BBReq)
+- *returns* instance of the [BBReq](#BBReq)
 
 Valid Requests, returning promises:
-```
+
+``` javascript
 bbrest.catalog().get(); // returns server catalog
 bbrest.catalog().post('path.to.xml'); // add item(s) to server catalog
 bbrest.catalog().put('path.to.xml'); // updates item(s) in server catalog
@@ -122,12 +129,13 @@ bbrest.catalog('myItem').get(); // returns item from the server catalog
 bbrest.catalog('myItem').delete(); // deletes item from the server catalog
 ```
 #### portalCatalog(item)
-Prepares request on portal catalog. [API Reference] (https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_portal.html)
+Prepares request on portal catalog. [API Reference](https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_portal.html)
 - **item** - name of the item in porta catalog
-- *returns* instance of the [BBReq] (#BBReq)
+- *returns* instance of the [BBReq](#BBReq)
 
 Valid Requests, returning promises:
-```
+
+``` javascript
 bbrest.portalCatalog().get(); // returns portal catalog
 bbrest.portalCatalog().post('path.to.xml'); // add item(s) to portal catalog
 bbrest.portalCatalog().put('path.to.xml'); // updates item(s) in portal catalog
@@ -138,12 +146,13 @@ bbrest.portalCatalog('myItem').delete(); // deletes item from the portal catalog
 ```
 
 #### page(name:String)
-Prepares page request. [API Reference] (https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_page.html)
+Prepares page request. [API Reference](https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_page.html)
 - **name** - name of the page to target
-- *returns* instance of the [BBReq] (#BBReq)
+- *returns* instance of the [BBReq](#BBReq)
 
 Valid Requests, returning promises:
-```
+
+``` javascript
 bbrest.page().get(); // returns portal pages
 bbrest.page().post('path.to.xml'); // creates page(s)
 bbrest.page().put('path.to.xml'); // updates page(s)
@@ -157,12 +166,13 @@ bbrest.page('name').rights().put('path.to.xml'); // updates page rights
 ```
 
 #### container(name:String)
-Prepares container request. [API Reference] (https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_pcat_cont.html)
+Prepares container request. [API Reference](https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_pcat_cont.html)
 - **name** - name of the container to target
-- *returns* instance of the [BBReq] (#BBReq)
+- *returns* instance of the [BBReq](#BBReq)
 
 Valid Requests, returning promises:
-```
+
+``` javascript
 bbrest.container().get(); // returns portal containers
 bbrest.container().post('path.to.xml'); // creates a container(s)
 bbrest.container().put('path.to.xml'); // updates container(s)
@@ -176,12 +186,13 @@ bbrest.container('name').rights().put('path.to.xml'); // updates container right
 ```
 
 #### widget(name:String)
-Prepares widget request. [API Reference] (https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_pcat_widg.html)
+Prepares widget request. [API Reference](https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_pcat_widg.html)
 - **name** - name of the widget to target
-- *returns* instance of the [BBReq] (#BBReq)
+- *returns* instance of the [BBReq](#BBReq)
 
 Valid Requests, returning promises:
-```
+
+``` javascript
 bbrest.widget().get(); // returns portal widgets
 bbrest.widget().post('path.to.xml'); // creates a widget(s)
 bbrest.widget().put('path.to.xml'); // updates widget(s)
@@ -195,12 +206,13 @@ bbrest.widget('name').rights().put('path.to.xml'); // updates widget rights
 ```
 
 #### link(name:String)
-Prepares link request. [API Reference] (https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_link.html)
+Prepares link request. [API Reference](https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_link.html)
 - **name** - name of the link to target
-- *returns* instance of the [BBReq] (#BBReq)
+- *returns* instance of the [BBReq](#BBReq)
 
 Valid Requests, returning promises:
-```
+
+``` javascript
 bbrest.link().get(); // returns portal links
 bbrest.link().post('path.to.xml'); // creates link(s)
 bbrest.link().put('path.to.xml'); // updates link(s)
@@ -214,12 +226,13 @@ bbrest.link('name').rights().put('path.to.xml'); // updates link rights
 ```
 
 #### template(name:String)
-Prepares template request. [API Reference] (https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_template.html)
+Prepares template request. [API Reference](https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_template.html)
 - **name** - name of the template to target
-- *returns* instance of the [BBReq] (#BBReq)
+- *returns* instance of the [BBReq](#BBReq)
 
 Valid Requests, returning promises:
-```
+
+``` javascript
 bbrest.template().get(); // returns portal templates
 bbrest.template().post('path.to.xml'); // creates template(s)
 
@@ -231,14 +244,15 @@ bbrest.template('name').rights().put('path.to.xml'); // updates template rights
 ```
 
 #### user(name:String, showGroups:Boolean, groupName:String)
-Prepares user request. [API Reference] (https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_user.html)
+Prepares user request. [API Reference](https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_user.html)
 - **name** - name of the user to target
 - **showGroups** - if true, user groups are targeted
 - **groupName** - name of the group to delete user from
-- *returns* instance of the [BBReq] (#BBReq)
+- *returns* instance of the [BBReq](#BBReq)
 
 Valid Requests, returning promises:
-```
+
+``` javascript
 bbrest.user().get(); // returns list of users
 bbrest.user().post('path.to.xml'); // creates a user
 
@@ -252,13 +266,14 @@ bbrest.user('user', true, 'group').delete(); // removes user from a group
 ```
 
 #### group(name:String, showUsers:Boolean)
-Prepares group request. [API Reference] (https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_group.html)
+Prepares group request. [API Reference](https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_group.html)
 - **name** - name of the group to target
 - **showUsers** - if true, group's users are targeted
-- *returns* instance of the [BBReq] (#BBReq)
+- *returns* instance of the [BBReq](#BBReq)
 
 Valid Requests, returning promises:
-```
+
+``` javascript
 bbrest.group().get(); // returns list of groups
 bbrest.group().post('path.to.xml'); // creates a group
 
@@ -272,23 +287,25 @@ bbrest.group('group', true, 'user').delete(); // removes user from a group
 ```
 
 #### audit(meta:Boolean)
-Prepares audit trails request. [API Reference] (https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_audit.html)
+Prepares audit trails request. [API Reference](https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_audit.html)
 - **meta** - if true, targets audit metadat, otherwise it targets audit events
-- *returns* instance of the [BBReq] (#BBReq)
+- *returns* instance of the [BBReq](#BBReq)
 
 Valid Requests, returning promises:
-```
+
+``` javascript
 bbrest.audit().get(); // returns auditEvents
 bbrest.audit(true).get(); // returns auditMetaData
 ```
 
 #### cache(type:String)
-Prepares cache request. [API Reference] (https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_caches.html)
+Prepares cache request. [API Reference](https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_caches.html)
 - **type** - possible values: global, widget, chrome, closure, url, web, gmodel
-- *returns* instance of the [BBReq] (#BBReq)
+- *returns* instance of the [BBReq](#BBReq)
 
 Valid Requests, returning promises:
-```
+
+``` javascript
 bbrest.cache('all').delete(); // sends all of the below requests one by one
 
 bbrest.cache('globalModelCache').delete();
@@ -308,29 +325,66 @@ bbrest.cache('itemUuidToReferencingLinkUuidsCache').delete();
 bbrest.cache('uuidToCacheKeysCache').delete();
 bbrest.cache('versionBundleCache').delete();
 ```
-You can [get bookmarklet] (http://goo.gl/YqOrp8) to delete all caches at once.
+You can [get bookmarklet](http://goo.gl/YqOrp8) to delete all caches at once.
 #### auto(data)
 Performs POST or PUT request by finding the right BBRest method from the data.
 - **data** - if string, represents path of the xml file which content will be sent. If object, it is first sent to config.plugin function
 - *returns* promise with response value
 
 Valid Request, returning promises:
-```
+
+``` javascript
 bbrest.auto('path.to.xml');
 ```
-## BBReq methods
+
+#### import(filePath:String)
+Imports portal. [API Reference](https://my.backbase.com/resources/documentation/portal/5.5.1/refc_rest_import.html)
+- **filePath** - path to file to upload / import
+- *returns* instance of the [BBReq](#BBReq)
+
+Valid Requests, returning promises:
+
+``` javascript
+bbrest.import().post('path.to.xml'); // imports xml
+bbrest.import('/path/to/exported.zip').post(); // uploads and imports zip archive
+```
+
+#### export(uuid:String)
+Exports portal. [API Reference](https://my.backbase.com/resources/documentation/portal/5.5.1/refc_rest_export.html)
+- **uuid** - id of the exported file on the server. Use when you need to download file
+- *returns* instance of the [BBReq](#BBReq)
+
+To get archive of the portal from the server, you need to make 2 requests.
+In first one, we send [type of export](https://my.backbase.com/resources/documentation/portal/5.5.1/refc_pxsd_elmt_xreq.html) and get back the id of exported archive in response.
+With second request we pass that id and local path where archive will be downloaded.
+
+Valid Requests, returning promises:
+
+``` javascript
+bbrest.export().post('path.to.xml').then(data) {
+    // data is xml or js object if plugin is used
+    var id = data.body.exportResponse.identifier; // get id of the archive
+    bbrest.export(id).file('local.path.zip').get(); // returns promise
+}
+```
+
+## <a name="BBReq"></a>BBReq methods
 #### rights()
 Modifies request to target rights.
-- *returns* instance of the [BBReq] (#BBReq)
+- *returns* instance of the [BBReq](#BBReq)
 
 #### tag(name:String)
 Modifies request to target tags
-- *returns* instance of the [BBReq] (#BBReq)
+- *returns* instance of the [BBReq](#BBReq)
 
 ### query(obj:Object)
-Defines modifiers. [API Reference] (https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_urlmod.html)
+Defines modifiers. [API Reference](https://my.backbase.com/resources/documentation/portal/5.5.1.0/refc_rest_urlmod.html)
 - **obj** - object with querystring values to be appended to the uri
-- *returns* instance of the [BBReq] (#BBReq)
+- *returns* instance of the [BBReq](#BBReq)
+
+#### file(path:String)
+Defines path to the file where export is downloaded.
+- *returns* instance of the [BBReq](#BBReq)
 
 #### get()
 Performs GET request
@@ -340,7 +394,8 @@ Performs GET request
 Performs POST request
 - **data** - if string, represents path of the xml file which content will be sent. If object, it is first sent to config.plugin function
 - *returns* promise with response value
-``` js
+
+``` javascript
 bbrest.config.plugin = function(data) {
     return jxon.jsToString(data); // converts js object in jxon notation to XML string which will be posted
 }
@@ -358,7 +413,8 @@ Performs DELETE request
 - *returns* promise with response value
 
 **response value:**
-```
+
+``` javascript
 {
   error: // true if is error
   statusCode: // http status code

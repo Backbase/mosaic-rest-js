@@ -1,9 +1,9 @@
 var r;
 if (typeof BBRest !== "undefined") {
-    r = new BBRest({portal: 'myBraveNewPortal'});
+    r = new BBRest({portal: 'myBraveNewPortal', toJs: true});
 } else {
     require(['bbrest'], function(BBRest) {
-        r = new BBRest({portal: 'myBraveNewPortal'});
+        r = new BBRest({portal: 'myBraveNewPortal', toJs: true});
     });
 }
 
@@ -31,8 +31,8 @@ describe('Testing server and portal methods', function () {
 
     it('should update testing portal', function (done) {
 	r.server().put(xmlPath + 'updatePortal.xml').then(function(d) {
-	    assert.propertyVal(d, 'statusCode', 204);
-	    done();
+            assert.propertyVal(d, 'statusCode', 204);
+            done();
 	});
     });
 
@@ -76,11 +76,42 @@ describe('Testing catalog methods', function () {
 
 });
 
+var exPath = xmlPath + 'portal-export-test.zip';
+describe('Testing portal export methods', function () {
+    var id;
+
+    it('Should export a portal', function (done) {
+        r.export().post(xmlPath + 'export.xml').then(function(d) {
+            id = d.body.exportResponse.identifier;
+            assert.propertyVal(d, 'statusCode', 200);
+            done();
+        });
+    });
+    it('Should download a portal', function (done) {
+        r.export(id).file(exPath).get().then(function(d) {
+            assert.propertyVal(d, 'statusCode', 200);
+            done();
+        });
+    });
+});
+
 describe('Testing portal import methods', function () {
+    this.timeout(3000);
 
     it('Should post a portal', function (done) {
         r.import().post(xmlPath + 'addPortalImport.xml').then(function(d) {
             assert.propertyVal(d, 'statusCode', 201);
+            done();
+        });
+    });
+    it('Should upload a portal', function (done) {
+        r.import(exPath).post().then(function(d) {
+            assert.propertyVal(d, 'statusCode', 201);
+            done();
+        });
+    });
+    it('Should remove export file', function (done) {
+        fs.unlink(exPath, function() {
             done();
         });
     });
@@ -235,12 +266,18 @@ describe('Clean up...', function () {
     before(function () {
     });
 
-    it("should remove testing portal", function(done) {
+    it('should remove testing portal', function(done) {
         r.portal().delete().then(function(d) {
             assert.propertyVal(d, 'statusCode', 204);
             done();
         });
-    	
     });
-    
+
+    it('should remove imported portal', function(done) {
+        r.config.portal = 'test-portal';
+        r.portal().delete().then(function(d) {
+            assert.propertyVal(d, 'statusCode', 204);
+            done();
+        });
+    });
 });

@@ -112,11 +112,24 @@
             var a = ['caches', type];
             return new BBReq('cache', this.config, a);
 	},
-	import: function() {
-            var a = ['import', 'portal'];
-            return new BBReq('import', this.config, a);
+	import: function(file) {
+            if (file) {
+                var a = ['orchestrator', 'import', 'upload'];
+                return new BBReq('import', this.config, a).file(file);
+            } else {
+                var a = ['import', 'portal'];
+                return new BBReq('import', this.config, a);
+            }
 	},
-	export: function() {
+	export: function(uuid) {
+            var a = ['orchestrator', 'export'];
+            if (uuid) {
+                a.push('files', uuid);
+                return new BBReq('export', this.config, a);
+            } else {
+                a.push('exportrequests');
+                return new BBReq('export', this.config, a);
+            }
 	},
         auto: function(d, method) {
             var t = this;
@@ -191,6 +204,10 @@
             this.qs = o;
             return this;
 	},
+        file: function(file) {
+            this.targetFile = file;
+            return this;
+        },
 	get: function() {
             /* methods that use .xml:
              * portal().xml().get()
@@ -281,68 +298,104 @@ var cch = ['globalModelCache',
 /*global jxon, p1, p2, require, BBRest, BBReq, module, unescape*/
 var request = p1;
 var Q = p2;
-var readFile = Q.denodeify(require('fs').readFile);
-var qReq = Q.denodeify(request);
+var fs = require('fs');
+var readFile = Q.denodeify(fs.readFile);
 
-BBReq.prototype.req = function(data) {
-    var t = this,
-	uri = 'http://' +
-              this.config.host + ':' +
-	      this.config.port + '/' +
-	      this.config.context + '/' +
-	      this.uri.join('/'),
-        reqP = {
+function getUri(cnf, uri) {
+    return 'http://' +
+    cnf.host + ':' +
+    cnf.port + '/' +
+    cnf.context + '/' +
+    uri.join('/');
+}
+
+function getRequest(uri, o) {
+    var reqP = {
             uri: uri,
-            qs: this.qs,
-            method: this.method,
-            headers: this.headers,
-            body: data || ''
+            qs: o.qs,
+            method: o.method,
+            headers: o.headers
         };
 
-    if (this.config.username !== null) {
+    if (o.config.username !== null) {
         reqP.auth = {
-            username: this.config.username,
-            password: this.config.password
+            username: o.config.username,
+            password: o.config.password
         };
     }
-
-    return qReq(reqP)
-    .then(function(p) {
-	var o = {
-            statusCode: parseInt(p[0].statusCode),
-            statusInfo: p[0].request.httpModule.STATUS_CODES[p[0].statusCode],
-            body: p[0].body,
-            href: p[0].request.href,
-            method: p[0].request.method,
-            reqBody: data,
-            headers: p[0].headers,
-            file: t.file || null
-	}, es;
-	if (o.statusCode >= 400) o.error = true;
-	else if (o.statusCode === 302) {
-            // if server redirects to error page, set message as error
-            es = o.headers.location.indexOf('errorMessage=');
-            if (es !== -1) o.error = unescape(o.headers.location.substr(es + 13));
-	} else if (t.config.plugin && o.body) {
-            o.body = t.config.plugin(o.body);
+    if (o.targetFile) {
+        if (o.method === 'POST') {
+            reqP.formData = {
+                file: fs.createReadStream(o.targetFile)
+            };
         }
-        // on get method if server redirects to error page, set message as error
-        es = o.href.indexOf('errorMessage=');
-        if (es !== -1) o.error = unescape(o.href.substr(es + 13));
-	return o;
+    }
+    return reqP;
+}
+
+function parseResponse(p, t) {
+    var o = {
+        statusCode: parseInt(p.statusCode),
+        statusInfo: p.request.httpModule.STATUS_CODES[p.statusCode],
+        href: p.request.href,
+        method: p.request.method,
+        headers: p.headers,
+        file: t.file || null
+    }, es;
+
+    if (typeof p.body !== 'undefined') o.body = p.body.toString();
+
+    if (o.statusCode >= 400) o.error = true;
+    else if (o.statusCode === 302) {
+        // if server redirects to error page, set message as error
+        es = o.headers.location.indexOf('errorMessage=');
+        if (es !== -1) o.error = unescape(o.headers.location.substr(es + 13));
+    } else if (t.config.plugin && o.body) {
+        o.body = t.config.plugin(o.body);
+    }
+    // on get method if server redirects to error page, set message as error
+    es = o.href.indexOf('errorMessage=');
+    if (es !== -1) o.error = unescape(o.href.substr(es + 13));
+    return o;
+}
+
+function parseError(t) {
+    return {
+        error: true,
+        statusCode: null,
+        statusInfo: 'Request failed',
+        body: null,
+        method: t.method,
+        file: t.targetFile || null
+    };
+}
+
+BBReq.prototype.req = function(data) {
+    var r,
+        t = this,
+        defer = Q.defer(),
+	uri = getUri(this.config, this.uri),
+        reqP = getRequest(uri, this);
+
+    reqP.body = data || '';
+
+    var req = request(reqP, function(err, p, dta) {
+        r = parseResponse(p, t);
+        if (!t.targetFile && r.body && t.config.toJs) r.body = stringToJs(r.body);
+        r.reqBody = data;
+        defer.resolve(r);
     })
-    .fail(function() {
-	return {
-            error: true,
-            statusCode: null,
-            statusInfo: 'Request failed',
-            body: null,
-            href: uri,
-            method: t.method,
-            reqBody: data,
-            file: t.file || null
-	};
+    .on('error', function() {
+        r = parseError(t);
+        r.reqBody = data;
+        r.uri = uri;
+        defer.reject(r);
     });
+
+    if (this.targetFile && this.uri[1] === 'export') {
+        req.pipe(fs.createWriteStream(this.targetFile));
+    }
+    return defer.promise;
 };
 
 function getRequestBody(inp, plugin) {

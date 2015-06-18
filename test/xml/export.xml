@@ -1,0 +1,7 @@
+<exportRequest>
+    <portalExportRequest>
+        <portalName>myBraveNewPortal</portalName>
+        <includeContent>true</includeContent>
+        <includeGroups>true</includeGroups>
+    </portalExportRequest>
+</exportRequest>

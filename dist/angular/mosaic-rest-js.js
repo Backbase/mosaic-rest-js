@@ -112,11 +112,23 @@
             var a = ['caches', type];
             return new BBReq('cache', this.config, a);
 	},
-	import: function() {
-            var a = ['import', 'portal'];
-            return new BBReq('import', this.config, a);
+	import: function(archive) {
+            if (archive) {
+                var a = ['orchestrator', 'import', 'upload'];
+                return new BBReq('import', this.config, a);
+            } else {
+                var a = ['import', 'portal'];
+                return new BBReq('import', this.config, a);
+            }
 	},
-	export: function() {
+	export: function(uuid) {
+            var a = ['orchestrator', 'export'];
+            if (uuid) {
+                a.push('files', uuid);
+            } else {
+                a.push('exportrequests');
+            }
+            return new BBReq('export', this.config, a);
 	},
         auto: function(d, method) {
             var t = this;

@@ -1,7 +1,8 @@
-var BBRest = require('../../dist/node/mosaic-rest-js'),
-    chai = require('chai'),
-    _ = require('lodash'),
-    chaiAsPromised = require('chai-as-promised');
+var BBRest = require('../../dist/node/mosaic-rest-js');
+var chai = require('chai');
+var _ = require('lodash');
+var chaiAsPromised = require('chai-as-promised');
+global.fs = require('fs');
 
 xmlPath = './test/xml/';
 chai.should();
