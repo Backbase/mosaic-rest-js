@@ -112,23 +112,19 @@
             var a = ['caches', type];
             return new BBReq('cache', this.config, a);
 	},
-	import: function(file) {
-            if (file) {
-                var a = ['orchestrator', 'import', 'upload'];
-                return new BBReq('import', this.config, a).file(file);
-            } else {
-                var a = ['import', 'portal'];
-                return new BBReq('import', this.config, a);
-            }
+	import: function() {
+            var a = ['import', 'portal'];
+            return new BBReq('import', this.config, a);
 	},
 	export: function(uuid) {
-            var a = ['orchestrator', 'export'];
+            var a;
             if (uuid) {
-                a.push('files', uuid);
+                a = ['orchestrator', 'export', 'files', uuid];
                 return new BBReq('export', this.config, a);
             } else {
-                a.push('exportrequests');
-                return new BBReq('export', this.config, a);
+                a = ['export', 'portal'];
+                return new BBReq('export', this.config, a)
+                .query({portalName: this.config.portal});
             }
 	},
         auto: function(d, method) {
@@ -205,6 +201,9 @@
             return this;
 	},
         file: function(file) {
+            if (this.uri[0] === 'import') {
+                this.uri = ['orchestrator', 'import', 'upload'];
+            }
             this.targetFile = file;
             return this;
         },
@@ -227,6 +226,9 @@
 	},
 	post: function(d) {
             this.method = 'POST';
+            if (this.uri[0] === 'export') {
+                this.uri = ['orchestrator', 'export', 'exportrequests'];
+            }
             return this.doRequest(d);
 	},
 	put: function(d) {

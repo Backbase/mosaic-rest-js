@@ -337,16 +337,15 @@ Valid Request, returning promises:
 bbrest.auto('path.to.xml');
 ```
 
-#### import(filePath:String)
+#### import()
 Imports portal. [API Reference](https://my.backbase.com/resources/documentation/portal/5.5.1/refc_rest_import.html)
-- **filePath** - path to file to upload / import
 - *returns* instance of the [BBReq](#BBReq)
 
 Valid Requests, returning promises:
 
 ``` javascript
 bbrest.import().post('path.to.xml'); // imports xml
-bbrest.import('/path/to/exported.zip').post(); // uploads and imports zip archive
+bbrest.import().file('/path/to/exported.zip').post(); // uploads and imports zip archive
 ```
 
 #### export(uuid:String)
@@ -361,10 +360,13 @@ With second request we pass that id and local path where archive will be downloa
 Valid Requests, returning promises:
 
 ``` javascript
+// export as xml in response
+bbrest.export().get();
+// prepare file export
 bbrest.export().post('path.to.xml').then(data) {
     // data is xml or js object if plugin is used
     var id = data.body.exportResponse.identifier; // get id of the archive
-    bbrest.export(id).file('local.path.zip').get(); // returns promise
+    return bbrest.export(id).file('local.path.zip').get(); // returns promise
 }
 ```
 

@@ -78,16 +78,23 @@ describe('Testing catalog methods', function () {
 
 var exPath = xmlPath + 'portal-export-test.zip';
 describe('Testing portal export methods', function () {
+    this.timeout(3000);
     var id;
 
-    it('Should export a portal', function (done) {
+    it('Should export a portal as xml', function (done) {
+        r.export().get().then(function(d) {
+            assert.propertyVal(d, 'statusCode', 200);
+            done();
+        });
+    });
+    it('Should prepare file export of a portal', function (done) {
         r.export().post(xmlPath + 'export.xml').then(function(d) {
             id = d.body.exportResponse.identifier;
             assert.propertyVal(d, 'statusCode', 200);
             done();
         });
     });
-    it('Should download a portal', function (done) {
+    it('Should download a portal export file', function (done) {
         r.export(id).file(exPath).get().then(function(d) {
             assert.propertyVal(d, 'statusCode', 200);
             done();
@@ -105,7 +112,7 @@ describe('Testing portal import methods', function () {
         });
     });
     it('Should upload a portal', function (done) {
-        r.import(exPath).post().then(function(d) {
+        r.import().file(exPath).post().then(function(d) {
             assert.propertyVal(d, 'statusCode', 201);
             done();
         });
