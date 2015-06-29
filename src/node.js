@@ -17,8 +17,11 @@ function getRequest(uri, o) {
             uri: uri,
             qs: o.qs,
             method: o.method,
-            headers: o.headers
+            headers: _.extend(o.headers, {
+                Connection: "close"
+            })
         };
+    console.log(o.headers);
 
     if (o.config.username !== null) {
         reqP.auth = {
