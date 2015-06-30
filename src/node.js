@@ -19,7 +19,6 @@ function getRequest(uri, o) {
             method: o.method,
             headers: o.headers
         };
-    reqP.headers.Connection = 'close';
 
     if (o.config.username !== null) {
         reqP.auth = {
@@ -63,17 +62,6 @@ function parseResponse(p, t) {
     return o;
 }
 
-function parseError(t) {
-    return {
-        error: true,
-        statusCode: null,
-        statusInfo: 'Request failed',
-        body: null,
-        method: t.method,
-        file: t.targetFile || null
-    };
-}
-
 BBReq.prototype.req = function(data) {
     var r,
         t = this,
@@ -83,18 +71,30 @@ BBReq.prototype.req = function(data) {
 
     reqP.body = data || '';
 
+    var onError = function(err) {
+        defer.reject({
+            error: true,
+            statusCode: null,
+            statusInfo: err.toString() || 'Request failed',
+            body: null,
+            reqBody: data,
+            uri: uri,
+            method: t.method,
+            file: t.targetFile || null
+        });
+    };
+
     var req = request(reqP, function(err, p, dta) {
-        r = parseResponse(p, t);
-        if (!t.targetFile && r.body && t.config.toJs) r.body = stringToJs(r.body);
-        r.reqBody = data;
-        defer.resolve(r);
+        if (err) {
+            onError(err);
+        } else {
+            r = parseResponse(p, t);
+            if (!t.targetFile && r.body && t.config.toJs) r.body = stringToJs(r.body);
+            r.reqBody = data;
+            defer.resolve(r);
+        }
     })
-    .on('error', function() {
-        r = parseError(t);
-        r.reqBody = data;
-        r.uri = uri;
-        defer.reject(r);
-    });
+    .on('error', onError);
 
     if (this.targetFile && this.uri[1] === 'export') {
         req.pipe(fs.createWriteStream(this.targetFile));
