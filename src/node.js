@@ -28,9 +28,8 @@ function getRequest(uri, o) {
     }
     if (o.targetFile) {
         if (o.method === 'POST') {
-            reqP.formData = {
-                file: fs.createReadStream(o.targetFile)
-            };
+            reqP.formData = {};
+            reqP.formData[(uri[1] === 'package') ? 'file' : 'package'] = fs.createReadStream(o.targetFile);
         }
     }
     return reqP;
@@ -96,8 +95,10 @@ BBReq.prototype.req = function(data) {
     })
     .on('error', onError);
 
-    if (this.targetFile && this.uri[1] === 'export') {
-        req.pipe(fs.createWriteStream(this.targetFile));
+    if (this.targetFile) {
+        if (this.uri[0] === 'export' || this.uri[1] === 'export') {
+            req.pipe(fs.createWriteStream(this.targetFile));
+        }
     }
     return defer.promise;
 };
