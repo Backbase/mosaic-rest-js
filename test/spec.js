@@ -116,8 +116,7 @@ describe.only('Testing package export methods', function () {
     it('Should upload a portal item', function (done) {
         r.importItem().file(imPath).post()
         .then(function(d) {
-            var ise = d.body.indexOf('ERROR');
-            assert.equal(ise, -1);
+            assert.propertyVal(d, 'statusCode', 200);
             done();
         });
     });
