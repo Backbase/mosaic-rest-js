@@ -116,6 +116,11 @@
             var a = ['import', 'portal'];
             return new BBReq('import', this.config, a);
 	},
+	importItem: function(toPortal) {
+            var a = ['import', 'package'];
+            if (toPortal) a.push(this.config.portal);
+            return new BBReq('importItem', this.config, a);
+	},
 	export: function(uuid) {
             var a;
             if (uuid) {
@@ -126,6 +131,12 @@
                 return new BBReq('export', this.config, a)
                 .query({portalName: this.config.portal});
             }
+	},
+	exportItem: function(itemName, fromPortal) {
+            var a = ['export', 'package'];
+            if (fromPortal) a.push(this.config.portal);
+            a.push(itemName);
+            return new BBReq('exportItem', this.config, a);
 	},
         auto: function(d, method) {
             var t = this;
@@ -202,7 +213,11 @@
 	},
         file: function(file) {
             if (this.uri[0] === 'import') {
-                this.uri = ['orchestrator', 'import', 'upload'];
+                if (this.uri[1] === 'package') {
+                    this.headers['Content-Type'] = 'multipart/form-data';
+                } else {
+                    this.uri = ['orchestrator', 'import', 'upload'];
+                }
             }
             this.targetFile = file;
             return this;
@@ -226,7 +241,7 @@
 	},
 	post: function(d) {
             this.method = 'POST';
-            if (this.uri[0] === 'export') {
+            if (this.uri[0] === 'export' && this.uri[1] !== 'package') {
                 this.uri = ['orchestrator', 'export', 'exportrequests'];
             }
             return this.doRequest(d);

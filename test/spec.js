@@ -102,6 +102,27 @@ describe('Testing portal export methods', function () {
     });
 });
 
+describe.only('Testing package export methods', function () {
+    this.timeout(3000);
+
+    exPath = '/Users/igor/export-test/package-export-test.zip';
+    it('Should download a portal item', function (done) {
+        r.exportItem('widget-navbar-advanced').file(exPath).get().then(function(d) {
+            assert.propertyVal(d, 'statusCode', 200);
+            done();
+        });
+    });
+    var imPath = '/Users/igor/export-test/widget-navbar-advanced-bad.zip';
+    it('Should upload a portal item', function (done) {
+        r.importItem().file(imPath).post()
+        .then(function(d) {
+            var ise = d.body.indexOf('ERROR');
+            assert.equal(ise, -1);
+            done();
+        });
+    });
+});
+
 describe('Testing portal import methods', function () {
     this.timeout(3000);
 
