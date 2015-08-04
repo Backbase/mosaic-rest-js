@@ -29,7 +29,7 @@ function getRequest(uri, o) {
     if (o.targetFile) {
         if (o.method === 'POST') {
             reqP.formData = {};
-            reqP.formData[(uri[1] === 'package') ? 'file' : 'package'] = fs.createReadStream(o.targetFile);
+            reqP.formData[(uri.indexOf('import/package') === -1) ? 'file' : 'package'] = fs.createReadStream(o.targetFile);
         }
     }
     return reqP;
