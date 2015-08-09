@@ -245,11 +245,12 @@
                 this.uri = ['orchestrator', 'export', 'exportrequests'];
             }
 
-            if (this.uri[0] === 'portals') {
+            if (this.uri[0] === 'portals' && this.uri.length === 2) {
                 this.uri.pop();
             }
 
-            return this.doRequest(d);
+
+        return this.doRequest(d);
 	},
 	put: function(d) {
             this.method = 'PUT';
