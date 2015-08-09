@@ -244,6 +244,11 @@
             if (this.uri[0] === 'export' && this.uri[1] !== 'package') {
                 this.uri = ['orchestrator', 'export', 'exportrequests'];
             }
+
+            if (this.uri[0] === 'portals') {
+                this.uri.pop();
+            }
+
             return this.doRequest(d);
 	},
 	put: function(d) {
