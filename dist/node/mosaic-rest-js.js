@@ -213,9 +213,9 @@
 	},
         file: function(file) {
             if (this.uri[0] === 'import') {
-                if (this.uri[1] === 'package') {
-                    this.headers['Content-Type'] = 'multipart/form-data';
-                } else {
+                 this.headers['Content-Type'] = 'multipart/form-data';
+                 this.headers['Connection'] = 'keep-alive';
+                if (this.uri[1] !== 'package') {
                     this.uri = ['orchestrator', 'import', 'upload'];
                 }
             }

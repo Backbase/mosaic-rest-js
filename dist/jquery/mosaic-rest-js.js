@@ -112,24 +112,31 @@
             var a = ['caches', type];
             return new BBReq('cache', this.config, a);
 	},
-	import: function(file) {
-            if (file) {
-                var a = ['orchestrator', 'import', 'upload'];
-                return new BBReq('import', this.config, a).upload(file);
+	import: function() {
+            var a = ['import', 'portal'];
+            return new BBReq('import', this.config, a);
+	},
+	importItem: function(toPortal) {
+            var a = ['import', 'package'];
+            if (toPortal) a.push(this.config.portal);
+            return new BBReq('importItem', this.config, a);
+	},
+	export: function(uuid) {
+            var a;
+            if (uuid) {
+                a = ['orchestrator', 'export', 'files', uuid];
+                return new BBReq('export', this.config, a);
             } else {
-                var a = ['import', 'portal'];
-                return new BBReq('import', this.config, a);
+                a = ['export', 'portal'];
+                return new BBReq('export', this.config, a)
+                .query({portalName: this.config.portal});
             }
 	},
-	export: function(uuid, file) {
-            var a = ['orchestrator', 'export'];
-            if (uuid) {
-                a.push('files', uuid);
-                return new BBReq('export', this.config, a).download(file);
-            } else {
-                a.push('exportrequests');
-                return new BBReq('export', this.config, a);
-            }
+	exportItem: function(itemName, fromPortal) {
+            var a = ['export', 'package'];
+            if (fromPortal) a.push(this.config.portal);
+            a.push(itemName);
+            return new BBReq('exportItem', this.config, a);
 	},
         auto: function(d, method) {
             var t = this;
@@ -204,6 +211,17 @@
             this.qs = o;
             return this;
 	},
+        file: function(file) {
+            if (this.uri[0] === 'import') {
+                 this.headers['Content-Type'] = 'multipart/form-data';
+                 this.headers['Connection'] = 'keep-alive';
+                if (this.uri[1] !== 'package') {
+                    this.uri = ['orchestrator', 'import', 'upload'];
+                }
+            }
+            this.targetFile = file;
+            return this;
+        },
 	get: function() {
             /* methods that use .xml:
              * portal().xml().get()
@@ -223,6 +241,9 @@
 	},
 	post: function(d) {
             this.method = 'POST';
+            if (this.uri[0] === 'export' && this.uri[1] !== 'package') {
+                this.uri = ['orchestrator', 'export', 'exportrequests'];
+            }
             return this.doRequest(d);
 	},
 	put: function(d) {
