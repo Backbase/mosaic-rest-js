@@ -129,7 +129,7 @@
             } else {
                 a = ['export', 'portal'];
                 return new BBReq('export', this.config, a)
-                .query({portalName: this.config.portal});
+                .query({portalName: this.config.portal, includeGroups: true});
             }
 	},
 	exportItem: function(itemName, fromPortal) {
