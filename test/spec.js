@@ -102,7 +102,7 @@ describe('Testing portal export methods', function () {
     });
 });
 
-describe.only('Testing package export methods', function () {
+describe('Testing package export methods', function () {
     this.timeout(3000);
 
     exPath = '/Users/igor/export-test/package-export-test.zip';

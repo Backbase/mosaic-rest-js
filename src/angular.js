@@ -13,11 +13,7 @@ var ngQ = ng.injector(['ng']).get('$q');
 BBReq.prototype.req = function(data) {
     //throw new Error(typeof ngHttp.get);
     var t = this,
-	uri = 'http://' +
-            this.config.host + ':' +
-            this.config.port + '/' +
-            this.config.context + '/' +
-            this.uri.join('/');
+	uri = this.getUri();
 
     if (this.config.username !== null) {
         this.headers.Authorization = 'Basic ' + btoa(this.config.username + ':' + this.config.password);

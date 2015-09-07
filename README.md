@@ -71,6 +71,7 @@ BBRest Constructor.
 
 ``` javascript
 {
+  scheme: 'http',
   host: 'localhost', 
   port: '7777',
   context: 'portalserver',

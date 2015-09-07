@@ -38,6 +38,7 @@
 
     function BBRest(cnf) {
 	this.config = extend({
+            scheme: 'http',
             host: 'localhost',
             port: '7777',
             context: 'portalserver',
@@ -289,9 +290,16 @@
             var t = this;
             this.uri[1] = cch[i];
             return this.req().then(function(v) {
-                if (!v.error && i < cch.length - 1) return t.deleteAllCache(++i);
+                if (i < cch.length - 1) return t.deleteAllCache(++i);
                 return v;
             });
+        },
+        getUri: function() {
+            return this.config.scheme + '://' +
+            this.config.host + ':' +
+            this.config.port + '/' +
+            this.config.context + '/' +
+            this.uri.join('/');
         }
     });
 
@@ -300,14 +308,15 @@ var cch = ['globalModelCache',
         'widgetChromeStaticCache',
         'serverSideClosureCache',
         'urlLevelCache',
-        //'webCache',
+        'contentTemplateCache',
+        'webCache',
         'gModelCache',
         'uuidFromExtendedItemNamesCache',
+        'springAclCacheRegion',
         'springAclSidCacheRegion',
         'contextNameToItemNameToUuidCache',
         'widgetCache',
         'uuidToContentReferencesCache',
-        'springAclCacheRegion',
         'itemUuidToReferencingLinkUuidsCache',
         'uuidToCacheKeysCache',
         'versionBundleCache'];

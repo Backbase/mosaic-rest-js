@@ -4,11 +4,7 @@ var $ = p1;
 
 BBReq.prototype.req = function(data) {
     var t = this,
-	uri = 'http://' +
-            this.config.host + ':' +
-            this.config.port + '/' +
-            this.config.context + '/' +
-            this.uri.join('/'),
+	uri = this.getUri(),
         qs = $.param(this.qs);
 
     if (qs) uri += '?' + qs;

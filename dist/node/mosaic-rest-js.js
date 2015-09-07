@@ -38,6 +38,7 @@
 
     function BBRest(cnf) {
 	this.config = extend({
+            scheme: 'http',
             host: 'localhost',
             port: '7777',
             context: 'portalserver',
@@ -289,9 +290,17 @@
             var t = this;
             this.uri[1] = cch[i];
             return this.req().then(function(v) {
-                if (!v.error && i < cch.length - 1) return t.deleteAllCache(++i);
+                if (i < cch.length - 1) return t.deleteAllCache(++i);
+                console.log(v);
                 return v;
             });
+        },
+        getUri: function() {
+            return this.config.scheme + '://' +
+            this.config.host + ':' +
+            this.config.port + '/' +
+            this.config.context + '/' +
+            this.uri.join('/');
         }
     });
 
@@ -300,14 +309,15 @@ var cch = ['globalModelCache',
         'widgetChromeStaticCache',
         'serverSideClosureCache',
         'urlLevelCache',
-        //'webCache',
+        'contentTemplateCache',
+        'webCache',
         'gModelCache',
         'uuidFromExtendedItemNamesCache',
+        'springAclCacheRegion',
         'springAclSidCacheRegion',
         'contextNameToItemNameToUuidCache',
         'widgetCache',
         'uuidToContentReferencesCache',
-        'springAclCacheRegion',
         'itemUuidToReferencingLinkUuidsCache',
         'uuidToCacheKeysCache',
         'versionBundleCache'];
@@ -317,14 +327,6 @@ var request = p1;
 var Q = p2;
 var fs = require('fs');
 var readFile = Q.denodeify(fs.readFile);
-
-function getUri(cnf, uri) {
-    return 'http://' +
-    cnf.host + ':' +
-    cnf.port + '/' +
-    cnf.context + '/' +
-    uri.join('/');
-}
 
 function getRequest(uri, o) {
     var reqP = {
@@ -379,7 +381,7 @@ BBReq.prototype.req = function(data) {
     var r,
         t = this,
         defer = Q.defer(),
-	uri = getUri(this.config, this.uri),
+	uri = this.getUri(),
         reqP = getRequest(uri, this);
 
     reqP.body = data || '';

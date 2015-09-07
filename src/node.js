@@ -4,14 +4,6 @@ var Q = p2;
 var fs = require('fs');
 var readFile = Q.denodeify(fs.readFile);
 
-function getUri(cnf, uri) {
-    return 'http://' +
-    cnf.host + ':' +
-    cnf.port + '/' +
-    cnf.context + '/' +
-    uri.join('/');
-}
-
 function getRequest(uri, o) {
     var reqP = {
             uri: uri,
@@ -65,7 +57,7 @@ BBReq.prototype.req = function(data) {
     var r,
         t = this,
         defer = Q.defer(),
-	uri = getUri(this.config, this.uri),
+	uri = this.getUri(),
         reqP = getRequest(uri, this);
 
     reqP.body = data || '';
