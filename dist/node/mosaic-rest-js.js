@@ -291,16 +291,15 @@
             this.uri[1] = cch[i];
             return this.req().then(function(v) {
                 if (i < cch.length - 1) return t.deleteAllCache(++i);
-                console.log(v);
                 return v;
             });
         },
-        getUri: function() {
+        getUri: function(excludePath) {
             return this.config.scheme + '://' +
             this.config.host + ':' +
             this.config.port + '/' +
             this.config.context + '/' +
-            this.uri.join('/');
+            (excludePath ? '' : this.uri.join('/'));
         }
     });
 

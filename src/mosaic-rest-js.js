@@ -294,12 +294,12 @@
                 return v;
             });
         },
-        getUri: function() {
+        getUri: function(excludePath) {
             return this.config.scheme + '://' +
             this.config.host + ':' +
             this.config.port + '/' +
             this.config.context + '/' +
-            this.uri.join('/');
+            (excludePath ? '' : this.uri.join('/'));
         }
     });
 
