@@ -295,11 +295,15 @@
             });
         },
         getUri: function(excludePath) {
-            return this.config.scheme + '://' +
-            this.config.host + ':' +
-            this.config.port + '/' +
-            this.config.context + '/' +
-            (excludePath ? '' : this.uri.join('/'));
+            var cfg = this.config;
+            if (this.uri[0] === 'orchestrator' && cfg.orchestrator) cfg = this.config.orchestrator;
+
+            var out = cfg.scheme + '://' +
+            cfg.host + ':' +
+            cfg.port + '/' +
+            cfg.context + '/';
+            if (excludePath) return out;
+            return out + this.uri.join('/');
         }
     });
 
