@@ -1,6 +1,6 @@
 {
   "name": "mosaic-rest-js",
-  "version": "0.4.0",
+  "version": "1.0.0",
   "description": "nodejs library for Backbase REST API",
   "keywords": [
     "backbase",
@@ -13,11 +13,11 @@
   "homepage": "https://github.com/Backbase/mosaic-rest-js.git",
   "bugs": "https://github.com/Backbase/mosaic-rest-js/issues",
   "author": "Igor Dimitrijevic",
-  "main": "dist/node/mosaic-rest-js.js",
+  "main": "src/mosaic-rest-js.js",
   "dependencies": {
-    "jxon": "^1.5.1",
-    "q": "^1.1.1",
-    "request": "^2.60.0"
+    "jxon": "^1.5.4",
+    "q": "^1.4.1",
+    "request": "^2.62.0"
   },
   "devDependencies": {
     "chai": "^3.0.0",
@@ -30,7 +30,6 @@
     "gulp-replace": "^0.5.3",
     "gulp-spawn-mocha": "^0.5.1",
     "gulp-uglify": "^1.0.1",
-    "istanbul": "^0.3.4",
     "lodash": "^2.4.1",
     "mocha": "^2.0.1"
   }

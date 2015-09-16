@@ -4,28 +4,28 @@
 'use strict';
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(['jxon', '#lib#'], factory);
+        define(['jxon', 'bbrest-plugin'], factory);
     } else if (typeof exports === 'object') {
         // Node. Does not work with strict CommonJS, but
         // only CommonJS-like environments that support module.exports,
         // like Node.
-        module.exports = factory(require('jxon'), require('request'), require('q'));
+        module.exports = factory(require('jxon'), require('./node'));
     } else {
         // Browser globals (root is window)
-        root.BBRest = factory(JXON, '#lib_global#');
+        root.BBRest = factory(root.JXON, root.BBRestPlugin);
     }
-}(this, function (jxon, p1, p2) {
+}(this, function (jxon, plugin) {
 'use strict';
 
-    // do not change to single quotes! gulp-file-include is not working with single quotes
     jxon.config({
-      valueKey: "_",
-      attrKey: "$",
-      attrPrefix: "$",
-      lowerCaseTags: false,
-      trueIsEmpty: false,
-      autoDate: false,
-      ignorePrefixedNodes: false
+        valueKey: '_',
+        attrKey: '$',
+        attrPrefix: '$',
+        lowerCaseTags: false,
+        trueIsEmpty: false,
+        autoDate: false,
+        ignorePrefixedNodes: false,
+        parseValues: false
     });
 
     function extend() {
@@ -44,8 +44,9 @@
             context: 'portalserver',
             username: 'admin',
             password: 'admin',
-            plugin: null,
-            portal: null
+            portal: null,
+            outputJxon: true,
+            plugin: plugin
 	}, cnf || {});
     }
 
@@ -139,50 +140,72 @@
             a.push(itemName);
             return new BBReq('exportItem', this.config, a);
 	},
-        auto: function(d, method) {
+        auto: function(payload, overrideMethod) {
+            var payloadType = getPayloadType(payload);
             var t = this;
-            return getRequestBody(d, this.config.plugin).then(function(r) {
-                if (typeof r === 'string') r = stringToJs(r);
-                var a = t.jxonToObj(r, method);
-                return t[a[0]]()[a[1]](d);
-            });
+
+            if (payloadType === 'filePath') {
+                return this.config.plugin.get(payload)
+                .then(function(payload) {
+                    return t.doAuto(jxon.stringToJs(payload), overrideMethod);
+                });
+            } else {
+                if (payloadType === 'xmlString') payload = jxon.stringToJs(payload);
+                t.doAuto(payload, overrideMethod);
+            }
+
         },
-        jxonToObj: function(j, method) {
-            var aKey, bKey, plural, context, a = [],
-                items = ['container', 'widget', 'page', 'link', 'template', 'user', 'group'];
-            for (aKey in j) {
-                for (bKey in j[aKey]) break;
-                context = j[aKey][bKey].contextItemName;
+        doAuto: function(jx, overrideMethod) {
+            var aKey, bKey, plural, context, method, httpMethod;
+            var ret = {};
+            var items = ['container', 'widget', 'page', 'link', 'template', 'user', 'group'];
+
+            for (aKey in jx) {
+                for (bKey in jx[aKey]) break;
+                context = jx[aKey][bKey].contextItemName;
 
                 switch (aKey) {
                     case 'catalog':
-                        if (context === '[BBHOST]') a.push('catalog', 'post');
-                        else a.push('portalCatalog', 'post');
+                        if (context === '[BBHOST]') {
+                            method = 'catalog';
+                            httpMethod = 'post';
+                        } else {
+                            method = 'portalCatalog';
+                            httpMethod = 'post';
+                        }
                         break;
                     case 'portals':
-                        a.push('server', 'post');
+                        method = 'server';
+                        httpMethod = 'post';
                         break;
                     case 'portal':
-                        a.push('server', 'put');
+                        method = 'server';
+                        httpMethod = 'put';
                         break;
                     default:
                         plural = aKey.charAt(aKey.length - 1) === 's';
                         if (plural) {
                             if (aKey.substr(0, aKey.length - 1) === bKey) {
-                                a.push(bKey, 'post');
+                                method = bKey;
+                                httpMethod = 'post';
                             } else {
                                 throw new Error(aKey + ' must be plural of ' + bKey);
                             }
                         } else {
-                            if (items.indexOf(aKey) !== -1) a.push(aKey, 'put');
-                            else a.push(aKey, 'post');
+                            if (items.indexOf(aKey) !== -1) {
+                                method = aKey;
+                                httpMethod = 'put';
+                            } else {
+                                method = aKey;
+                                httpMethod = 'post';
+                            }
                         }
                         break;
                 }
                 break;
             }
-            if (method) a[1] = method;
-            return a;
+            if (overrideMethod) httpMethod = overrideMethod;
+            return this[method]()[httpMethod](jx);
         }
 
     });
@@ -233,31 +256,33 @@
              * link('name').xml().get() */
             if (this.uri[0] === 'portals' && this.uri.length === 2) this.uri[1] += '.xml';
             if (this.uri[2] === 'catalog' && this.uri[3]) this.uri[3] += '.xml';
-            if (this.uri[2] === 'pages' && this.uri[3]) this.uri[3] += '.xml';
-            if (this.uri[2] === 'containers' && this.uri[3]) this.uri[3] += '.xml';
-            if (this.uri[2] === 'widgets' && this.uri[3]) this.uri[3] += '.xml';
-            if (this.uri[2] === 'links' && this.uri[3]) this.uri[3] += '.xml';
+            if (this.uri[4] !== 'rights') {
+                if (this.uri[2] === 'pages' && this.uri[3]) this.uri[3] += '.xml';
+                if (this.uri[2] === 'containers' && this.uri[3]) this.uri[3] += '.xml';
+                if (this.uri[2] === 'widgets' && this.uri[3]) this.uri[3] += '.xml';
+                if (this.uri[2] === 'links' && this.uri[3]) this.uri[3] += '.xml';
+            }
             this.method = 'GET';
-            return this.req();
+            return this.doRequest();
 	},
-	post: function(d) {
+	post: function(payload) {
             this.method = 'POST';
             if (this.uri[0] === 'export' && this.uri[1] !== 'package') {
                 this.uri = ['orchestrator', 'export', 'exportrequests'];
             }
-            return this.doRequest(d);
+            return this.doRequest(payload);
 	},
-	put: function(d) {
+	put: function(payload) {
             this.method = 'PUT';
-            return this.doRequest(d);
+            return this.doRequest(payload);
 	},
 	// fixing inconsistencies in API
 	// server /delete/catalog POST
 	// portal /portals/[portal_name]/delete/catalog POST
 	// link /portals/[portal_name]/delete/links POST
-	delete: function(v) {
+	delete: function(payload) {
             this.method = 'DELETE';
-            if (v) {
+            if (payload) {
 		this.method = 'POST';
 		switch (this.command) {
                     case 'server':
@@ -278,18 +303,60 @@
             if (this.command === 'cache' && this.uri[1] === 'all') {
                 return this.deleteAllCache(0);
             }
-            return this.doRequest(v);
+            return this.doRequest(payload);
 	},
-        doRequest: function(d) {
-            var t = this;
-            return getRequestBody(d, this.config.plugin).then(function(r) {
-                return t.req(r);
-            });
+        doRequest: function(payload) {
+            var payloadType = payload ? getPayloadType(payload) : '';
+            var toSend = {
+                url: this.getUri(),
+                method: this.method,
+                query: this.qs,
+                headers: this.headers,
+                payload: (payloadType === 'jxon') ? jxon.jsToString(payload) : payload,
+                username: this.config.username,
+                password: this.config.password,
+                file: this.targetFile
+            };
+            var that = this;
+
+            if (payloadType === 'filePath') {
+                return this.config.plugin.get(payload)
+                .then(function(fileContent) {
+                    toSend.payload = fileContent.toString();
+                    return that.config.plugin.request(toSend)
+                    .then(function(res) {
+                        return that.parseResponse(res);
+                    });
+                });
+            } else {
+                return this.config.plugin.request(toSend)
+                .then(function(res) {
+                    return that.parseResponse(res);
+                });
+            }
+        },
+        parseResponse: function(res) {
+            res.body = unescape(res.body);
+            var jx = jxon.stringToJs(res.body);
+            if (res.statusCode >= 300) {
+                if (jx.html) {
+                    var o = {};
+                    parseForError(jx.html.body, o);
+                    res.error = o.title + ' ' + o.description;
+                    throw new Error(res.error);
+                } else {
+                    console.log(e.body);
+                }
+            } else {
+                // if (this.config.payloadType === 'jxon') res.body = jx;
+                if (this.config.outputJxon) res.body = jx;
+            }
+            return res;
         },
         deleteAllCache: function(i) {
             var t = this;
             this.uri[1] = cch[i];
-            return this.req().then(function(v) {
+            return this.doRequest().then(function(v) {
                 if (i < cch.length - 1) return t.deleteAllCache(++i);
                 return v;
             });
@@ -306,6 +373,28 @@
             return out + this.uri.join('/');
         }
     });
+
+function getPayloadType(payload) {
+    if (typeof payload === 'object') return 'jxon';
+    if (typeof payload !== 'string' || payload === '') throw new Error('Wrong payload: ' + payload);
+    if (payload.charAt(0) === '<') return 'xmlString';
+    return 'filePath';
+}
+
+function unescape(html) {
+  return String(html)
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, '\'')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&');
+}
+
+function parseForError(el, o) {
+    if (el.$class === 'bd-errorTitle') o.title = el._;
+    if (el.$class === 'bd-errorDescription') o.description = el._;
+    for (var key in el) if (typeof el[key] === 'object') parseForError(el[key], o);
+}
 
 var cch = ['globalModelCache',
         'retrievedWidgetCache',

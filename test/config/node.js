@@ -1,4 +1,5 @@
-var BBRest = require('../../dist/node/mosaic-rest-js');
+var BBRest = require('../../src/mosaic-rest-js');
+var Q = require('q');
 var chai = require('chai');
 var _ = require('lodash');
 var chaiAsPromised = require('chai-as-promised');
@@ -10,6 +11,7 @@ chai.use(chaiAsPromised);
 chai.config.includeStack = true;
 
 global.BBRest = BBRest;
+global.Q = Q;
 global._ = _;
 
 global.expect = chai.expect;

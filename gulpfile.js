@@ -48,6 +48,12 @@ gulp.task('min', ['jquery', 'angular'], function() {
     }));
 });
 
+gulp.task('test', function () {
+    return gulp.src('./test/spec.js', {read: false})
+    .pipe(mocha({
+        r: './test/config/node.js'
+    }));
+});
 gulp.task('test-node', ['node'], function () {
     return gulp.src('./test/spec.js', {read: false})
     .pipe(mocha({
