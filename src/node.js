@@ -18,6 +18,11 @@ function getRequest(uri, o) {
             password: o.config.password
         };
     }
+
+    if (o.config.timeout && o.config.timeout > 0) {
+        reqP.timeout = o.config.timeout;
+    }
+
     if (o.targetFile) {
         if (o.method === 'POST') {
             reqP.formData = {};
