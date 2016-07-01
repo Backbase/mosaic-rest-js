@@ -1,14 +1,15 @@
 /* global describe, before, beforeEach, it, require */
 'use strict';
-import * as BBRest from '../src/main.js';
+import BBRest from '../src/main.js';
 import {assert} from 'chai';
-let bbrest;
-let request;
-let uri;
 
 describe('Running BBRest tests...', function() {
+    let bbrest;
+    let request;
+    let uri;
+
     before('Creating BBRest instance', function() {
-        bbrest = BBRest.create({
+        bbrest = BBRest({
             portal: 'test-portal',
             plugin: {
                 get: function() {
@@ -29,7 +30,7 @@ describe('Running BBRest tests...', function() {
     describe('Testing BBRest instance...', function() {
         it('should fail if plugin is not defined', function() {
             assert.throws(function() {
-                BBRest.create();
+                BBRest();
             }, Error);
         });
 

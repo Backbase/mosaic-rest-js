@@ -20,7 +20,7 @@ function BBRest(config) {
     log('Configuration', config);
 }
 
-export function create(cnf) {
+export default function create(cnf) {
     if (!cnf.hasOwnProperty('plugin')) throw new Error('Configuration object must define plugin property');
     const config = Object.assign({}, defaults, cnf);
     return new BBRest(config);

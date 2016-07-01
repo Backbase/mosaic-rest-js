@@ -1,6 +1,6 @@
 /* global describe, before, beforeEach, it, require */
 'use strict';
-import * as BBRest from '../src/main.js';
+import BBRest from '../src/main.js';
 import * as fetchPlugin from '../src/needle-plugin.js';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -27,7 +27,7 @@ function debug(prom) {
 
 describe('Running BBRest tests...', function() {
     before('Creating BBRest instance', function() {
-        r = bbrest = BBRest.create({
+        r = bbrest = BBRest({
             portal: 'myBraveNewPortal',
             plugin: fetchPlugin,
             verbose: true,
