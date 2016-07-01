@@ -2,6 +2,7 @@
   "name": "mosaic-rest-js",
   "version": "1.0.0",
   "description": "nodejs library for Backbase REST API",
+  "main": "dist/main.js",
   "keywords": [
     "backbase",
     "rest api"

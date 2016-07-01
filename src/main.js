@@ -1,6 +1,7 @@
 import BBReq from './request';
 import * as utils from './utils';
-import log, { setEnable } from './logger'
+import log, { setEnable } from './logger';
+import * as needlePlugin from './needle-plugin';
 
 const defaults = {
     scheme: 'http',
@@ -21,7 +22,10 @@ function BBRest(config) {
 }
 
 export default function create(cnf) {
-    if (!cnf.hasOwnProperty('plugin')) throw new Error('Configuration object must define plugin property');
+    if (!cnf.hasOwnProperty('plugin')) {
+      cnf.plugin = needlePlugin
+      // throw new Error('Configuration object must define plugin property');
+    }
     const config = Object.assign({}, defaults, cnf);
     return new BBRest(config);
 }

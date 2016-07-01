@@ -6,6 +6,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import fs from 'fs';
 import nodeUtil from 'util';
+import * as utils from '../src/utils.js';
 chai.use(chaiAsPromised);
 const assert = chai.assert;
 const xmlPath = './test/xml/';
@@ -100,6 +101,7 @@ describe('Running BBRest tests...', function() {
             } catch(err) {}
             promise = bbrest.export(id).file(exPath).get()
             .then(function(file) {
+              console.log(file);
                 return fs.statSync(file).isFile();
             });
             return assert.becomes(promise, true);
