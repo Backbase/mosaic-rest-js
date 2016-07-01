@@ -125,7 +125,6 @@ Object.assign(BBReq.prototype, {
             username: this.config.username,
             password: this.config.password,
             file: this.targetFile,
-            csrf: this.config.csrf
         };
         if (this.targetFile) {
             if (this.method === 'POST') {

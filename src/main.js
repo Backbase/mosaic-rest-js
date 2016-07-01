@@ -11,7 +11,6 @@ const defaults = {
     password: 'admin',
     portal: null,
     outputJxon: true,
-    csrf: true,
     verbose: false,
 };
 
