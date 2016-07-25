@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<exportRequest>
-    <portalExportRequest>
-        <portalName>myBraveNewPortal</portalName>
-        <includeContent>true</includeContent>
-        <includeGroups>true</includeGroups>
-    </portalExportRequest>
-</exportRequest>
