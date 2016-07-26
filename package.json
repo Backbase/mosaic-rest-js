@@ -15,7 +15,7 @@
   "bugs": "https://github.com/Backbase/mosaic-rest-js/issues",
   "author": "Igor Dimitrijevic",
   "dependencies": {
-    "lib-bb-portal-rest": "^1.0.0",
+    "lib-bb-portal-rest": "^0.1.1",
     "q": "^1.4.1",
     "request": "^2.74.0"
   }
