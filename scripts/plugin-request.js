@@ -45,12 +45,12 @@ function getSessionHeaders(config, log) {
   }
   return defer.promise;
 }
-function parseResponse(res) {
+function parseResponse(res, isDownload) {
   return {
     status: res.statusCode,
     statusText: res.statusMessage,
     headers: res.headers,
-    body: res.body.toString()
+    body: isDownload ? '' : res.body.toString()
   };
 }
 
@@ -79,25 +79,22 @@ exports.request = function(config, log) {
       body: config.body
     }
     log('Request Configuration', config);
-    if (config.file) {
+    if (config.file && !config.download) {
       options.formData = {};
       options.formData[config.upload] = fs.createReadStream(config.file);
     }
     
     var defer = Q.defer();
 
-    request(options,
+    var req = request(options,
       function(err, res) {
         if (err) defer.reject(err);
         else {
-          if (config.headers.Authorization) {
-            sessionHeaders.Cookie = res.headers['set-cookie'];
-            delete sessionHeaders.Authorization;
-          }
-          defer.resolve(parseResponse(res));
+          defer.resolve(parseResponse(res, config.download));
         }
       }
     );
+    if (config.download) req.pipe(fs.createWriteStream(config.file));
     return defer.promise;
   });
 }
