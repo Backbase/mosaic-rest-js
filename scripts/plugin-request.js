@@ -19,17 +19,14 @@ function getSessionHeaders(config, log) {
   var defer = Q.defer();
   if (sessionHeaders) defer.resolve(sessionHeaders);
   else {
-    var base64 = new Buffer(config.username + ':' + config.password, 'utf8')
-      .toString('base64');
-    var headers = {
-      Authorization: 'Basic ' + base64,
-    };
-    log('Session Request Configuration', {url: config.url, method: 'HEAD', headers: headers});
+    var body = `username=${config.username}&password=${config.password}`;
+    log('Session Request Configuration', {url: 'http://localhost:8080/cxp/login', method: 'POST'});
     // can we use head method?
     request({
-        url: config.url,
-        method: 'HEAD',
-        headers: headers
+        url: 'http://localhost:8080/cxp/login',
+        method: 'POST',
+        body: body,
+        headers: Object.assign(config.headers, {'Content-Type': 'application/x-www-form-urlencoded'}),
       }, function(err, res) {
       if (err) defer.reject(err);
       else {
