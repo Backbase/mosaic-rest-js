@@ -76,7 +76,8 @@ exports.request = function(config, log) {
       method: config.method,
       uri: config.url,
       headers: config.headers,
-      body: config.body
+      body: config.body,
+      qs: config.query
     }
     log('Request Configuration', config);
     if (config.file && !config.download) {
