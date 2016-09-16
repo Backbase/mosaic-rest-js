@@ -20,10 +20,11 @@ function getSessionHeaders(config, log) {
   if (sessionHeaders) defer.resolve(sessionHeaders);
   else {
     var body = `username=${config.username}&password=${config.password}`;
-    log('Session Request Configuration', {url: 'http://localhost:8080/cxp/login', method: 'POST'});
+    var lurl = config.url.replace('portals?ps', 'login');
+    log('Session Request Configuration', {url: lurl, method: 'POST'});
     // can we use head method?
     request({
-        url: 'http://localhost:8080/cxp/login',
+        url: lurl,
         method: 'POST',
         body: body,
         headers: Object.assign(config.headers, {'Content-Type': 'application/x-www-form-urlencoded'}),
@@ -73,7 +74,8 @@ exports.request = function(config, log) {
       method: config.method,
       uri: config.url,
       headers: config.headers,
-      body: config.body
+      body: config.body,
+      qs: config.query
     }
     log('Request Configuration', config);
     if (config.file && !config.download) {
