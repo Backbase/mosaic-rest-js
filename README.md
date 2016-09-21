@@ -8,7 +8,7 @@ This is a js library for Backbase [REST API](https://my.backbase.com/resources/d
 #### nodejs
 
 ``` javascript
-var BBRest = require('mosaic-rest-js'),
+var BBRest = require('mosaic-rest-js');
 var bbrest = new BBRest({
    portal: 'myPortal'
  });
