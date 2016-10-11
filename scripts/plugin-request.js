@@ -20,14 +20,15 @@ function getSessionHeaders(config, log) {
   if (sessionHeaders) defer.resolve(sessionHeaders);
   else {
     var body = `username=${config.username}&password=${config.password}`;
-    var lurl = config.url.replace('portals?ps', 'login');
+    var urlp = url.parse(config.url);
+    var lurl = `${urlp.protocol}//${urlp.host}/cxp/login`;
     log('Session Request Configuration', {url: lurl, method: 'POST'});
     // can we use head method?
     request({
         url: lurl,
         method: 'POST',
         body: body,
-        headers: Object.assign(config.headers, {'Content-Type': 'application/x-www-form-urlencoded'}),
+        headers: Object.assign({}, config.headers, {'Content-Type': 'application/x-www-form-urlencoded'}),
       }, function(err, res) {
       if (err) defer.reject(err);
       else {
