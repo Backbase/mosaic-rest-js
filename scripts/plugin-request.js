@@ -15,43 +15,14 @@ exports.get = function(filePath) {
   return defer.promise;
 }
 
-function getSessionHeaders(config, log) {
-  var defer = Q.defer();
-  if (sessionHeaders) defer.resolve(sessionHeaders);
-  else {
-    var base64 = new Buffer(config.username + ':' + config.password, 'utf8')
-      .toString('base64');
-    var headers = {
-      Authorization: 'Basic ' + base64,
-    };
-    log('Session Request Configuration', {url: config.url, method: 'HEAD', headers: headers});
-    // can we use head method?
-    request({
-        url: config.url,
-        method: 'HEAD',
-        headers: headers
-      }, function(err, res) {
-      if (err) defer.reject(err);
-      else {
-        sessionHeaders = {
-          Cookie: res.headers['set-cookie']
-        }
-        const csrf = res.headers['x-bbxsrf'];
-        if (csrf) sessionHeaders['X-BBXSRF'] = csrf;
-
-        defer.resolve(sessionHeaders);
-      }
-    });
-  }
-  return defer.promise;
-}
 function parseResponse(res, isDownload) {
-  return {
+  var out = {
     status: res.statusCode,
     statusText: res.statusMessage,
     headers: res.headers,
     body: isDownload ? '' : res.body.toString()
   };
+  return out;
 }
 
 /**
@@ -61,43 +32,41 @@ function parseResponse(res, isDownload) {
  * query - object - query hash
  * headers - object - headers hash
  * body - string - body to send
- * username - string - username
- * password - string - password
- * file - string - file path for upload/download
+ * importFile - string - file path for upload
+ * exportFile - string - file path for download
  * upload - string - name of the form field for upload
- * download - boolean - true if response is stream to download
  */
 exports.request = function(config, log) {
-  return getSessionHeaders(config, log)
-  .then(function(headers) {
-    Object.assign(config.headers, headers);
+  var defer = Q.defer();
 
-    var options = {
-      method: config.method,
-      uri: config.url,
-      headers: config.headers,
-      body: config.body,
-      qs: config.query
-    }
-    log('Request Configuration', config);
-    if (config.file && !config.download) {
-      options.formData = {};
-      options.formData[config.upload] = fs.createReadStream(config.file);
-    }
-    
-    var defer = Q.defer();
+  var options = {
+    uri: config.url,
+    method: config.method,
+    headers: config.headers,
+    body: config.body,
+    qs: config.query
+  }
 
-    var req = request(options,
-      function(err, res) {
-        if (err) defer.reject(err);
-        else {
-          defer.resolve(parseResponse(res, config.download));
-        }
+  if (config.importFile) {
+    log('Request Configuration', Object.assign({}, options, { formData: config.importFile }));
+    options.formData = {};
+    options.formData[config.upload] = fs.createReadStream(config.importFile);
+  } else {
+    log('Request Configuration', options);
+  }
+  
+
+  var req = request(options,
+    function(err, res) {
+      if (err) defer.reject(err);
+      else {
+        defer.resolve(parseResponse(res, config.hasOwnProperty('exportFile')));
       }
-    );
-    if (config.download) req.pipe(fs.createWriteStream(config.file));
-    return defer.promise;
-  });
+    }
+  );
+  if (config.exportFile) req.pipe(fs.createWriteStream(config.exportFile));
+
+  return defer.promise;
 }
 
 exports.urlParse = function(urlString) {
@@ -112,3 +81,6 @@ exports.log = function(title, obj) {
   }));  
 }
 
+exports.btoa = function(str) {
+  return new Buffer(str, 'utf8').toString('base64');
+}  
